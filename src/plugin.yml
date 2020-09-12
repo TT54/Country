@@ -1,0 +1,8 @@
+main: fr.tt54.country.Main
+name: Country
+author: TT54
+version: SNAPSHOT0.1.0
+commands:
+  country:
+    description: All commands of the plugin
+    aliases: [c]

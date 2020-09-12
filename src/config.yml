@@ -1,0 +1,10 @@
+version: "1.0"
+
+messagenotfound: "&cThis message was not found !"
+
+nocountryname: "CountryLess" #Country's name for the player who does not have a country
+
+enablechat: true
+chatformat: "&7[%relation_color%%country_name%&7] %relation_color%%player% : &f%message%"
+
+maxchars: 10
