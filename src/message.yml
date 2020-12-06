@@ -51,6 +51,7 @@ cantcreatewithmorepower: "&cYou can't create a rank with a same/superior power t
 cantdeletewithmorepower: "&cYou can't delete a rank with a same/superior power than your power"
 cantsetrankwithmorepower: "&cYou can't set a rank with a same/superior power than your power"
 canteditrankwithmorepower: "&cYou can't edit a rank with a same/superior power than your power"
+cantdeletemember: "&cYou can't delete the rank member"
 rankalreadyexist: "&cThe rank %rank% already exists"
 rankdoesntexist: "&cThe rank %rank% does not exist"
 tomanychars: "&cYou can't create a rank with more than %maxchars% characters in his name/prefix (actually %chars%)"

@@ -164,6 +164,11 @@ public class CmdRank extends SubCommand {
                         return false;
                     }
 
+                    if (rankToRemove.getName().equalsIgnoreCase("member")) {
+                        player.sendMessage(Main.getMessages().getMessage("cantdeletemember"));
+                        return false;
+                    }
+
                     if (CountryManager.deleteCountryRank(country, name)) {
                         player.sendMessage(Main.getMessages().getMessage("rankdeleted", "%rank%", name));
                         return true;

@@ -4,6 +4,7 @@ import org.bukkit.Chunk;
 import org.bukkit.OfflinePlayer;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Country {
 
@@ -175,6 +176,11 @@ public class Country {
             if (rank.getName().equalsIgnoreCase(name)) {
                 rankToRemove = this.ranks.indexOf(rank);
             }
+        }
+
+        for (OfflinePlayer player : members.entrySet().stream().filter(offlinePlayerRankEntry -> offlinePlayerRankEntry.getValue().getName().equalsIgnoreCase(name)).collect(Collectors
+                .toList()).stream().map(Map.Entry::getKey).collect(Collectors.toList())) {
+            setRank(player, this.getRank("member"));
         }
         if (rankToRemove >= 0)
             this.ranks.remove(rankToRemove);
