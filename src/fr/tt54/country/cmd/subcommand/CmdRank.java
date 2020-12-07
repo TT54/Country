@@ -5,7 +5,7 @@ import fr.tt54.country.cmd.SubCommand;
 import fr.tt54.country.manager.CountryManager;
 import fr.tt54.country.objects.country.Country;
 import fr.tt54.country.objects.country.Rank;
-import fr.tt54.country.utils.CountryPermission;
+import fr.tt54.country.objects.permissions.CountryPermission;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;

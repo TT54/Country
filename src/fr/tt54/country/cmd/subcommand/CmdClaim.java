@@ -2,6 +2,7 @@ package fr.tt54.country.cmd.subcommand;
 
 import fr.tt54.country.Main;
 import fr.tt54.country.cmd.SubCommand;
+import fr.tt54.country.manager.ClaimManager;
 import fr.tt54.country.manager.CountryManager;
 import fr.tt54.country.objects.permissions.CountryPermission;
 import fr.tt54.country.utils.Permission;
@@ -10,10 +11,10 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class CmdOpen extends SubCommand {
+public class CmdClaim extends SubCommand {
 
-    public CmdOpen() {
-        super("open", new String[]{}, "Allow everyone to join your country");
+    public CmdClaim() {
+        super("claim", new String[0], "Claim a chunk");
     }
 
     @Override
@@ -31,16 +32,17 @@ public class CmdOpen extends SubCommand {
             player.sendMessage(Main.getMessages().getMessage("nocountry"));
             return false;
         }
-        if (!Permission.hasFactionPermission(player, CountryPermission.OPEN_FACTION)) {
+        if (!Permission.hasFactionPermission(player, CountryPermission.CLAIM)) {
             player.sendMessage(Main.getMessages().getMessage("notcountrypermission"));
             return false;
         }
-        if (CountryManager.getPlayerCountry(player).isOpened()) {
-            player.sendMessage(Main.getMessages().getMessage("alreadyopened"));
-            return false;
+
+        if (!ClaimManager.isInClaimedChunk(player.getLocation())) {
+            //TODO Verify country's power + edit message
+            ClaimManager.claimChunk(CountryManager.getPlayerCountry(player), player.getLocation());
+            player.sendMessage("CLAIMED !");
         }
-        CountryManager.openCountry(player);
-        return true;
+        return false;
     }
 
     @Override

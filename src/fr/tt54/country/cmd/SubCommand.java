@@ -44,6 +44,7 @@ public abstract class SubCommand {
         registerCommand(new CmdClose());
         registerCommand(new CmdRank());
         registerCommand(new CmdInfo());
+        registerCommand(new CmdClaim());
     }
 
     public static void registerCommand(SubCommand subCommand) {

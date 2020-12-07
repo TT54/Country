@@ -1,6 +1,6 @@
 package fr.tt54.country.objects.country;
 
-import fr.tt54.country.utils.CountryPermission;
+import fr.tt54.country.objects.permissions.CountryPermission;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -2,8 +2,10 @@ package fr.tt54.country;
 
 import fr.tt54.country.cmd.CountryCommand;
 import fr.tt54.country.cmd.SubCommand;
+import fr.tt54.country.listener.ClaimListener;
 import fr.tt54.country.listener.ConnectionListener;
 import fr.tt54.country.listener.PlayerListener;
+import fr.tt54.country.manager.ClaimManager;
 import fr.tt54.country.manager.CountryManager;
 import fr.tt54.country.manager.InviteManager;
 import fr.tt54.country.objects.country.Rank;
@@ -35,6 +37,7 @@ public class Main extends JavaPlugin {
 
         this.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         this.getServer().getPluginManager().registerEvents(new ConnectionListener(), this);
+        this.getServer().getPluginManager().registerEvents(new ClaimListener(), this);
         SubCommand.registerCommands();
     }
 
@@ -50,6 +53,7 @@ public class Main extends JavaPlugin {
         Rank.loadDefaultRanks();
         CountryManager.enable();
         InviteManager.enable();
+        ClaimManager.enable();
 
         this.noCountryName = this.getConfig().getString("nocountryname");
 

@@ -4,7 +4,7 @@ import fr.tt54.country.Main;
 import fr.tt54.country.cmd.SubCommand;
 import fr.tt54.country.manager.CountryManager;
 import fr.tt54.country.manager.InviteManager;
-import fr.tt54.country.utils.CountryPermission;
+import fr.tt54.country.objects.permissions.CountryPermission;
 import fr.tt54.country.utils.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;

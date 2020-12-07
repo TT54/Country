@@ -1,4 +1,4 @@
-package fr.tt54.country.utils;
+package fr.tt54.country.objects.permissions;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,7 +11,8 @@ public enum CountryPermission {
     CREATE_RANK,
     DELETE_RANK,
     SET_RANK,
-    EDIT_RANK;
+    EDIT_RANK,
+    CLAIM;
 
     private static Map<String, CountryPermission> permissions = new HashMap<>();
 

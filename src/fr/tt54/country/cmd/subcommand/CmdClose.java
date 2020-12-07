@@ -3,7 +3,7 @@ package fr.tt54.country.cmd.subcommand;
 import fr.tt54.country.Main;
 import fr.tt54.country.cmd.SubCommand;
 import fr.tt54.country.manager.CountryManager;
-import fr.tt54.country.utils.CountryPermission;
+import fr.tt54.country.objects.permissions.CountryPermission;
 import fr.tt54.country.utils.Permission;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

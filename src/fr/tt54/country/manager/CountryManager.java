@@ -3,7 +3,7 @@ package fr.tt54.country.manager;
 import fr.tt54.country.Main;
 import fr.tt54.country.objects.country.Country;
 import fr.tt54.country.objects.country.Rank;
-import fr.tt54.country.utils.CountryPermission;
+import fr.tt54.country.objects.permissions.CountryPermission;
 import fr.tt54.country.utils.FileManager;
 import fr.tt54.country.utils.Permission;
 import org.bukkit.Bukkit;

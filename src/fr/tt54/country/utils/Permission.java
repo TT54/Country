@@ -1,6 +1,7 @@
 package fr.tt54.country.utils;
 
 import fr.tt54.country.manager.CountryManager;
+import fr.tt54.country.objects.permissions.CountryPermission;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 
