@@ -35,8 +35,39 @@ public class ClaimManager {
         saveClaim(claim, true);
     }
 
+    public static Country getClaimCountry(Chunk chunk) {
+        return getClaim(chunk).getOwner();
+    }
+
+    public static Country getClaimCountry(Claim claim) {
+        return claim.getOwner();
+    }
+
+    public static Claim getClaim(Chunk chunk) {
+        return claims.get(chunk);
+    }
+
     public static void claimChunk(Country country, Location location) {
         claimChunk(country, location.getChunk());
+    }
+
+    public static void unclaimChunk(Country country, Location location) {
+        if (isInClaimedChunk(location))
+            unclaimChunk(country, location.getChunk());
+    }
+
+    private static void unclaimChunk(Country country, Chunk chunk) {
+        if (getClaimCountry(chunk).getUuid().toString().equalsIgnoreCase(country.getUuid().toString())) {
+            removeClaimInFile(getClaim(chunk), true);
+            chunkClaimed.remove(chunk);
+            claims.remove(chunk);
+        }
+    }
+
+    public static void removeClaimInFile(Claim claim, boolean save) {
+        claimsFileConfig.set(claim.getChunk().getWorld().getUID().toString() + "." + claim.getChunk().getX() + ";" + claim.getChunk().getZ(), null);
+        if (save)
+            saveClaimFile();
     }
 
     public static void saveClaim(Claim claim, boolean save) {

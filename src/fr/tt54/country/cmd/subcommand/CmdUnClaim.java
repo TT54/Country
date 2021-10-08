@@ -4,7 +4,6 @@ import fr.tt54.country.Main;
 import fr.tt54.country.cmd.SubCommand;
 import fr.tt54.country.manager.ClaimManager;
 import fr.tt54.country.manager.CountryManager;
-import fr.tt54.country.objects.country.Country;
 import fr.tt54.country.objects.permissions.CountryPermission;
 import fr.tt54.country.utils.Permission;
 import org.bukkit.command.CommandSender;
@@ -12,10 +11,9 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class CmdClaim extends SubCommand {
-
-    public CmdClaim() {
-        super("claim", new String[0], "Claim a chunk");
+public class CmdUnClaim extends SubCommand {
+    public CmdUnClaim() {
+        super("unclaim", new String[]{}, "Unclaim a chunk");
     }
 
     @Override
@@ -38,19 +36,19 @@ public class CmdClaim extends SubCommand {
             return false;
         }
 
-        if (!ClaimManager.isInClaimedChunk(player.getLocation())) {
-            Country country = CountryManager.getPlayerCountry(player);
-            if (country.getChunksClaimed().size() >= country.getMaxClaims()) {
-                player.sendMessage(Main.getMessages().getMessage("tomanyclaims"));
+        if (ClaimManager.isInClaimedChunk(player.getLocation())) {
+            if (ClaimManager.getClaimCountry(player.getLocation().getChunk()) != CountryManager.getPlayerCountry(player)) {
+                player.sendMessage(Main.getMessages().getMessage("notyourclaim"));
                 return false;
             }
 
-            ClaimManager.claimChunk(country, player.getLocation());
-            player.sendMessage(Main.getMessages().getMessage("claimed"));
+            ClaimManager.unclaimChunk(CountryManager.getPlayerCountry(player), player.getLocation());
+            player.sendMessage(Main.getMessages().getMessage("unclaimed"));
         } else {
-            player.sendMessage(Main.getMessages().getMessage("cantclaim"));
+            player.sendMessage(Main.getMessages().getMessage("notinclaim"));
             return false;
         }
+
         return true;
     }
 

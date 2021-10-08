@@ -35,7 +35,7 @@ public class Rank {
 
     public static void loadDefaultRanks() {
         defaultRanks.add(new Rank("leader", "", 10, new ArrayList<>(CountryPermission.getPermissions().values())));
-        defaultRanks.add(new Rank("officer", "", 9, Arrays.asList(CountryPermission.INVITE_PLAYER, CountryPermission.OPEN_FACTION, CountryPermission.BUILD, CountryPermission.CREATE_RANK, CountryPermission.DELETE_RANK, CountryPermission.EDIT_RANK, CountryPermission.SET_RANK)));
+        defaultRanks.add(new Rank("officer", "", 9, Arrays.asList(CountryPermission.INVITE_PLAYER, CountryPermission.OPEN_FACTION, CountryPermission.BUILD, CountryPermission.CREATE_RANK, CountryPermission.DELETE_RANK, CountryPermission.EDIT_RANK, CountryPermission.SET_RANK, CountryPermission.CLAIM)));
         defaultRanks.add(new Rank("warrior", "", 1, Arrays.asList(CountryPermission.BUILD)));
         defaultRanks.add(new Rank("member", "", 0));
     }

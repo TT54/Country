@@ -28,7 +28,7 @@ public class CmdHelp extends SubCommand {
         }
         if (page < 0)
             page = 0;
-        sender.sendMessage("§2---- HELP [" + (page + 1) + "]----");
+        sender.sendMessage("§2---- HELP [" + (page + 1) + "/" + (SubCommand.commands.size() / Main.MAX_COMMANDS_IN_HELP + 1) + "]----");
         for (String str : getHelpMessage(sender, page)) {
             sender.sendMessage(str);
         }
