@@ -1,7 +1,6 @@
-package fr.tt54.country.objects;
+package fr.tt54.country.objects.country;
 
 import fr.tt54.country.manager.CountryManager;
-import fr.tt54.country.objects.country.Country;
 import org.bukkit.Bukkit;
 
 import java.util.UUID;

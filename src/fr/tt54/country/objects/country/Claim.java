@@ -1,10 +1,10 @@
-package fr.tt54.country.objects;
+package fr.tt54.country.objects.country;
 
+import fr.tt54.country.manager.ClaimManager;
 import fr.tt54.country.manager.CountryManager;
-import fr.tt54.country.objects.country.Country;
 import fr.tt54.country.objects.permissions.ClaimPermission;
 import org.bukkit.Chunk;
-import org.bukkit.entity.Player;
+import org.bukkit.OfflinePlayer;
 
 import java.util.*;
 
@@ -42,15 +42,29 @@ public class Claim {
         this.owner = owner;
     }
 
-    public void addPlayerPermission(Player player, ClaimPermission permission) {
+    public void addPlayerPermission(OfflinePlayer player, ClaimPermission permission) {
         List<ClaimPermission> permissions = playersPermissions.getOrDefault(player.getUniqueId(), new ArrayList<>());
         if (!permissions.contains(permission)) {
             permissions.add(permission);
             this.playersPermissions.put(player.getUniqueId(), permissions);
+            ClaimManager.saveClaim(this, true);
         }
     }
 
-    public boolean hasPermission(Player player, ClaimPermission permission) {
+    public void removePlayerPermission(OfflinePlayer player, ClaimPermission permission) {
+        List<ClaimPermission> permissions = playersPermissions.getOrDefault(player.getUniqueId(), new ArrayList<>());
+        if (permissions.contains(permission)) {
+            permissions.remove(permission);
+            if (permissions.isEmpty()) {
+                this.playersPermissions.remove(player.getUniqueId());
+            } else {
+                this.playersPermissions.put(player.getUniqueId(), permissions);
+            }
+            ClaimManager.saveClaim(this, true);
+        }
+    }
+
+    public boolean hasPermission(OfflinePlayer player, ClaimPermission permission) {
         return playersPermissions.getOrDefault(player.getUniqueId(), new ArrayList<>()).contains(permission);
     }
 

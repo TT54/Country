@@ -40,12 +40,17 @@ public abstract class SubCommand {
         registerCommand(new CmdJoin());
         registerCommand(new CmdLeave());
         registerCommand(new CmdInvite());
+        registerCommand(new CmdUninvite());
         registerCommand(new CmdOpen());
         registerCommand(new CmdClose());
         registerCommand(new CmdRank());
         registerCommand(new CmdInfo());
         registerCommand(new CmdClaim());
         registerCommand(new CmdUnClaim());
+        registerCommand(new CmdAccess());
+        registerCommand(new CmdKick());
+        registerCommand(new CmdLeader());
+        registerCommand(new CmdPermission());
     }
 
     public static void registerCommand(SubCommand subCommand) {

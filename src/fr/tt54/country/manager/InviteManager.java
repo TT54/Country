@@ -1,8 +1,8 @@
 package fr.tt54.country.manager;
 
 import fr.tt54.country.Main;
-import fr.tt54.country.objects.Invite;
 import fr.tt54.country.objects.country.Country;
+import fr.tt54.country.objects.country.Invite;
 import fr.tt54.country.objects.permissions.CountryPermission;
 import fr.tt54.country.utils.FileManager;
 import fr.tt54.country.utils.Permission;
@@ -65,7 +65,7 @@ public class InviteManager {
     }
 
     public static void invite(OfflinePlayer target, Player sender) {
-        if (CountryManager.hasCountry(sender) && !CountryManager.hasCountry(target) && Permission.hasFactionPermission(sender, CountryPermission.INVITE_PLAYER)) {
+        if (CountryManager.hasCountry(sender) && !CountryManager.hasCountry(target) && Permission.hasCountryPermission(sender, CountryPermission.INVITE_PLAYER)) {
             invites.add(new Invite(target.getUniqueId(), sender.getUniqueId(), CountryManager.getPlayerCountry(sender)));
             String uuid = UUID.randomUUID().toString();
             invitesFile.set(target.getUniqueId().toString() + "." + uuid + ".factionuuid", CountryManager.getPlayerCountry(sender).getUuid().toString());
@@ -73,7 +73,7 @@ public class InviteManager {
             saveInvites();
             sender.sendMessage(Main.getMessages().getMessage("youinviteplayer", "%player%", target.getName()));
             if (target.isOnline()) {
-                target.getPlayer().sendMessage(Main.getMessages().getMessage("invited", "%sender%", sender.getName(), "%faction%", CountryManager.getPlayerCountry(sender).getName()));
+                target.getPlayer().sendMessage(Main.getMessages().getMessage("invited", "%sender%", sender.getName(), "%country%", CountryManager.getPlayerCountry(sender).getName()));
             }
             for (OfflinePlayer offlinePlayer : CountryManager.getPlayerCountry(sender).getMembers().keySet()) {
                 if (offlinePlayer.isOnline()) {
@@ -94,6 +94,32 @@ public class InviteManager {
         }
         for (Invite invite : remove) {
             invites.remove(invite);
+        }
+    }
+
+    public static void uninvite(OfflinePlayer player, Country country) {
+        for (int i = 0; i < invites.size(); i++) {
+            if (invites.get(i).getCountry() == country && invites.get(i).getPlayerUUID().equals(player.getUniqueId())) {
+                invites.remove(i);
+                break;
+            }
+        }
+
+        invitesFile.set(player.getUniqueId().toString(), null);
+        for (Invite invite : invites) {
+            String uuid = UUID.randomUUID().toString();
+            invitesFile.set(invite.getPlayerUUID().toString() + "." + uuid + ".factionuuid", invite.getCountry().getUuid().toString());
+            invitesFile.set(invite.getPlayerUUID().toString() + "." + uuid + ".senderuuid", invite.getSenderUUID().toString());
+        }
+        saveInvites();
+
+        if (player.isOnline()) {
+            player.getPlayer().sendMessage(Main.getMessages().getMessage("uninvited", "%country%", country.getName()));
+        }
+        for (OfflinePlayer offlinePlayer : country.getMembers().keySet()) {
+            if (offlinePlayer.isOnline()) {
+                offlinePlayer.getPlayer().sendMessage(Main.getMessages().getMessage("playeruninvited", "%player%", player.getName()));
+            }
         }
     }
 

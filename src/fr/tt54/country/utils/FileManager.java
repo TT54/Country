@@ -7,6 +7,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 public class FileManager {
 
@@ -46,6 +47,13 @@ public class FileManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static File getInternalFile(String fileName) {
+        URL url = FileManager.class.getClassLoader().getResource(fileName);
+        if (url != null)
+            return new File(url.getFile());
+        return null;
     }
 
 }

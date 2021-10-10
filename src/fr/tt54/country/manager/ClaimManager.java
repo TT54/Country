@@ -1,8 +1,9 @@
 package fr.tt54.country.manager;
 
-import fr.tt54.country.objects.Claim;
+import fr.tt54.country.objects.country.Claim;
 import fr.tt54.country.objects.country.Country;
 import fr.tt54.country.objects.permissions.ClaimPermission;
+import fr.tt54.country.objects.permissions.CountryPermission;
 import fr.tt54.country.utils.FileManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -10,6 +11,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +33,8 @@ public class ClaimManager {
         chunkClaimed.put(chunk, country.getUuid());
         Claim claim = new Claim(chunk, country);
         claims.put(chunk, claim);
+
+        country.claimChunk(chunk);
 
         saveClaim(claim, true);
     }
@@ -61,6 +65,7 @@ public class ClaimManager {
             removeClaimInFile(getClaim(chunk), true);
             chunkClaimed.remove(chunk);
             claims.remove(chunk);
+            country.unclaimChunk(chunk);
         }
     }
 
@@ -75,7 +80,7 @@ public class ClaimManager {
 
         Map<UUID, List<ClaimPermission>> playersPermissions = claim.getPlayersPermissions();
         for (UUID uuid : playersPermissions.keySet()) {
-            claimsFileConfig.set(claim.getChunk().getWorld().getName() + "." + claim.getChunk().getX() + ";" + claim.getChunk().getZ() + ".permissions." + uuid.toString(),
+            claimsFileConfig.set(claim.getChunk().getWorld().getUID().toString() + "." + claim.getChunk().getX() + ";" + claim.getChunk().getZ() + ".permissions." + uuid.toString(),
                     ClaimPermission.getStringFromList(playersPermissions.get(uuid)));
         }
         if (save)
@@ -118,6 +123,8 @@ public class ClaimManager {
 
                     Claim claim = new Claim(chunk, UUID.fromString(section.getString(coordinates + ".country")), playersPermissions);
 
+                    claim.getOwner().claimChunk(chunk);
+
                     System.out.println(claim.getOwner().getName());
 
                     chunkClaimed.put(chunk, claim.getOwner().getUuid());
@@ -131,6 +138,17 @@ public class ClaimManager {
 
     public static boolean isInClaimedChunk(Location location) {
         return chunkClaimed.containsKey(location.getChunk());
+    }
+
+    public static boolean hasPermission(Player player, Claim claim, ClaimPermission claimPermission, CountryPermission countryPermission) {
+        if (claim.hasPermission(player, claimPermission))
+            return true;
+        if (!CountryManager.hasCountry(player))
+            return false;
+        Country country = CountryManager.getPlayerCountry(player);
+        if (claim.getOwner() != country)
+            return false;
+        return CountryManager.getRank(player).hasPermission(countryPermission);
     }
 
 }

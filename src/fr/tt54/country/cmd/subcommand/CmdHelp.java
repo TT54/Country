@@ -7,7 +7,6 @@ import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class CmdHelp extends SubCommand {
@@ -37,7 +36,7 @@ public class CmdHelp extends SubCommand {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, SubCommand subCommand, String command, String[] args) {
-        return Collections.emptyList();
+        return null;
     }
 
     public static List<String> getHelpMessage(CommandSender sender, int page) {

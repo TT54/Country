@@ -15,10 +15,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class CmdInvite extends SubCommand {
+public class CmdUninvite extends SubCommand {
 
-    public CmdInvite() {
-        super("invite", new String[]{"inv"}, "Invite a player to your country");
+    public CmdUninvite() {
+        super("uninvite", new String[]{"uninv"}, "Remove the invite for a player to your country");
     }
 
     @Override
@@ -33,7 +33,7 @@ public class CmdInvite extends SubCommand {
             return false;
         }
         if (player.getName().equalsIgnoreCase(args[0])) {
-            player.sendMessage(Main.getMessages().getMessage("inviteyourself"));
+            player.sendMessage(Main.getMessages().getMessage("uninviteyourself"));
             return false;
         }
         if (!CountryManager.hasCountry(player)) {
@@ -53,11 +53,11 @@ public class CmdInvite extends SubCommand {
             player.sendMessage(Main.getMessages().getMessage("playerhascountry", "%player%", args[0]));
             return false;
         }
-        if (InviteManager.isInvited(offlinePlayer, CountryManager.getPlayerCountry(player))) {
-            player.sendMessage(Main.getMessages().getMessage("alreadyinvited", "%player%", args[0]));
+        if (!InviteManager.isInvited(offlinePlayer, CountryManager.getPlayerCountry(player))) {
+            player.sendMessage(Main.getMessages().getMessage("playernotinvited", "%player%", args[0]));
             return false;
         }
-        InviteManager.invite(offlinePlayer, player);
+        InviteManager.uninvite(offlinePlayer, CountryManager.getPlayerCountry(player));
         return true;
     }
 
@@ -68,4 +68,5 @@ public class CmdInvite extends SubCommand {
         }
         return Collections.emptyList();
     }
+
 }

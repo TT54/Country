@@ -34,10 +34,10 @@ public class Rank {
     }
 
     public static void loadDefaultRanks() {
-        defaultRanks.add(new Rank("leader", "", 10, new ArrayList<>(CountryPermission.getPermissions().values())));
-        defaultRanks.add(new Rank("officer", "", 9, Arrays.asList(CountryPermission.INVITE_PLAYER, CountryPermission.OPEN_FACTION, CountryPermission.BUILD, CountryPermission.CREATE_RANK, CountryPermission.DELETE_RANK, CountryPermission.EDIT_RANK, CountryPermission.SET_RANK, CountryPermission.CLAIM)));
-        defaultRanks.add(new Rank("warrior", "", 1, Arrays.asList(CountryPermission.BUILD)));
-        defaultRanks.add(new Rank("member", "", 0));
+        defaultRanks.add(new Rank("leader", "[Leader]", 10, new ArrayList<>(CountryPermission.getPermissions().values())));
+        defaultRanks.add(new Rank("officer", "[Officer]", 9, Arrays.asList(CountryPermission.INVITE_PLAYER, CountryPermission.OPEN_FACTION, CountryPermission.BUILD, CountryPermission.OPEN_CHEST, CountryPermission.USE_BUTTON, CountryPermission.OPEN_DOOR, CountryPermission.INTERACT, CountryPermission.CREATE_RANK, CountryPermission.DELETE_RANK, CountryPermission.EDIT_RANK, CountryPermission.SET_RANK, CountryPermission.CLAIM, CountryPermission.ACCESS_CLAIM)));
+        defaultRanks.add(new Rank("warrior", "[Warrior]", 1, Arrays.asList(CountryPermission.BUILD, CountryPermission.OPEN_CHEST)));
+        defaultRanks.add(new Rank("member", "[Member]", 0));
     }
 
     public boolean hasPermission(CountryPermission countryPermission) {

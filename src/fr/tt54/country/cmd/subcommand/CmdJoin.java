@@ -53,8 +53,8 @@ public class CmdJoin extends SubCommand {
     @Override
     public List<String> onTabComplete(CommandSender sender, SubCommand subCommand, String command, String[] args) {
         List<String> message = new ArrayList<>();
-        if (args.length == 0) {
-            message.addAll(CountryManager.countriesMap.values().stream().map(Country::getName).filter(name -> name.startsWith(args[0])).collect(Collectors.toList()));
+        if (args.length == 1) {
+            message.addAll(CountryManager.countriesMap.values().stream().map(Country::getName).filter(name -> name.toLowerCase().startsWith(args[0].toLowerCase())).collect(Collectors.toList()));
         }
         return message;
     }

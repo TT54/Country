@@ -32,7 +32,7 @@ public class CmdRank extends SubCommand {
         Player player = (Player) sender;
 
         if (args.length == 0) {
-            sender.sendMessage(Main.getMessages().getBadUsageMessage("/country " + command + " list|create|delete|set|edit"));
+            sender.sendMessage(Main.getMessages().getBadUsageMessage("/country " + command + " list|create|delete|set|edit|info"));
             return false;
         }
 
@@ -255,7 +255,7 @@ public class CmdRank extends SubCommand {
                 }
 
             default:
-                sender.sendMessage(Main.getMessages().getBadUsageMessage("/country " + command + " list|create|delete|add|remove|edit"));
+                sender.sendMessage(Main.getMessages().getBadUsageMessage("/country " + command + " list|create|delete|set|edit|info"));
                 return false;
         }
     }
@@ -283,12 +283,16 @@ public class CmdRank extends SubCommand {
 
         Rank rankToEdit = country.getRank(rankName);
 
-        if (rank.getPower() <= rankToEdit.getPower()) {
+        if (!rank.getName().equalsIgnoreCase("leader") && rank.getPower() <= rankToEdit.getPower()) {
             player.sendMessage(Main.getMessages().getMessage("canteditrankwithmorepower"));
             return false;
         }
 
         if (param.equalsIgnoreCase("power")) {
+            if (rankToEdit.getName().equalsIgnoreCase("leader") && rankToEdit.getPower() == 10) {
+                player.sendMessage(Main.getMessages().getMessage("canteditleaderpower"));
+                return false;
+            }
             try {
                 int power = Integer.parseInt(newSetting);
 
@@ -326,19 +330,19 @@ public class CmdRank extends SubCommand {
                         case "delete":
 
                         case "edit":
-                            return CountryManager.getPlayerCountry(player).getRanks().stream().filter(rank -> rank.getPower() < CountryManager.getRank(player).getPower()).map(Rank::getName).filter(name -> name.startsWith(args[1])).collect(Collectors.toList());
+                            return CountryManager.getPlayerCountry(player).getRanks().stream().filter(rank -> rank.getPower() < CountryManager.getRank(player).getPower()).map(Rank::getName).filter(name -> name.toLowerCase().startsWith(args[1].toLowerCase())).collect(Collectors.toList());
 
                         case "set":
-                            return Bukkit.getOnlinePlayers().stream().map(Player::getName).filter(name -> name.startsWith(args[1])).collect(Collectors.toList());
+                            return Bukkit.getOnlinePlayers().stream().map(Player::getName).filter(name -> name.toLowerCase().startsWith(args[1].toLowerCase())).collect(Collectors.toList());
 
                         case "info":
-                            return CountryManager.getPlayerCountry(player).getRanks().stream().map(Rank::getName).filter(name -> name.startsWith(args[1])).collect(Collectors.toList());
+                            return CountryManager.getPlayerCountry(player).getRanks().stream().map(Rank::getName).filter(name -> name.toLowerCase().startsWith(args[1].toLowerCase())).collect(Collectors.toList());
                     }
                 } else if (args.length == 3) {
                     if (args[0].equalsIgnoreCase("set")) {
-                        return CountryManager.getPlayerCountry(player).getRanks().stream().filter(rank -> rank.getPower() < CountryManager.getRank(player).getPower()).map(Rank::getName).filter(name -> name.startsWith(args[2])).collect(Collectors.toList());
+                        return CountryManager.getPlayerCountry(player).getRanks().stream().filter(rank -> rank.getPower() < CountryManager.getRank(player).getPower()).map(Rank::getName).filter(name -> name.toLowerCase().startsWith(args[2].toLowerCase())).collect(Collectors.toList());
                     } else if (args[0].equalsIgnoreCase("edit")) {
-                        return Arrays.asList("prefix", "power").stream().filter(s -> s.startsWith(args[0])).collect(Collectors.toList());
+                        return Arrays.asList("prefix", "power").stream().filter(s -> s.toLowerCase().startsWith(args[0].toLowerCase())).collect(Collectors.toList());
                     }
                 }
             }

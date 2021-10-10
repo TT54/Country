@@ -3,6 +3,9 @@ package fr.tt54.country.cmd.subcommand;
 import fr.tt54.country.Main;
 import fr.tt54.country.cmd.SubCommand;
 import fr.tt54.country.manager.CountryManager;
+import fr.tt54.country.manager.InventoryManager;
+import fr.tt54.country.objects.country.Country;
+import fr.tt54.country.objects.country.Rank;
 import fr.tt54.country.objects.permissions.CountryPermission;
 import fr.tt54.country.utils.Permission;
 import org.bukkit.command.CommandSender;
@@ -10,10 +13,9 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class CmdOpen extends SubCommand {
-
-    public CmdOpen() {
-        super("open", new String[]{}, "Allow everyone to join your country");
+public class CmdPermission extends SubCommand {
+    public CmdPermission() {
+        super("permission", new String[]{"perm"}, "Edit rank permissions");
     }
 
     @Override
@@ -23,23 +25,30 @@ public class CmdOpen extends SubCommand {
             return false;
         }
         Player player = (Player) sender;
-        if (args.length != 0) {
-            player.sendMessage(Main.getMessages().getBadUsageMessage("/country " + command));
-            return false;
-        }
+
         if (!CountryManager.hasCountry(player)) {
             player.sendMessage(Main.getMessages().getMessage("nocountry"));
             return false;
         }
-        if (!Permission.hasCountryPermission(player, CountryPermission.OPEN_FACTION)) {
+        if (!Permission.hasCountryPermission(player, CountryPermission.EDIT_PERMISSIONS)) {
             player.sendMessage(Main.getMessages().getMessage("notcountrypermission"));
             return false;
         }
-        if (CountryManager.getPlayerCountry(player).isOpened()) {
-            player.sendMessage(Main.getMessages().getMessage("alreadyopened"));
+
+        if (args.length != 1) {
+            player.sendMessage(Main.getMessages().getBadUsageMessage("/country " + command + " <rank>"));
             return false;
         }
-        CountryManager.openCountry(player);
+
+        Country country = CountryManager.getPlayerCountry(player);
+        if (country.getRank(args[0]) == null) {
+            player.sendMessage(Main.getMessages().getMessage("rankdoesntexist", "%rank%", args[0]));
+            return false;
+        }
+        Rank rank = country.getRank(args[0]);
+
+        InventoryManager.openPermissionInventory(player, country, rank);
+
         return true;
     }
 

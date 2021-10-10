@@ -9,10 +9,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class CmdInfo extends SubCommand {
@@ -51,7 +48,7 @@ public class CmdInfo extends SubCommand {
     @Override
     public List<String> onTabComplete(CommandSender sender, SubCommand subCommand, String command, String[] args) {
         if (args.length == 1) {
-            return CountryManager.countriesMap.values().stream().map(Country::getName).collect(Collectors.toList());
+            return CountryManager.countriesMap.values().stream().map(Country::getName).filter(s -> s.toLowerCase().startsWith(args[0].toLowerCase())).collect(Collectors.toList());
         }
         return null;
     }
@@ -65,12 +62,14 @@ public class CmdInfo extends SubCommand {
         sender.sendMessage("§aClaims: §2" + country.getChunksClaimed().size() + "/" + country.getMaxClaims());
         List<OfflinePlayer> playersList = new ArrayList<>(country.getMembers().keySet());
         List<String> membersList = new ArrayList<>();
+        Collections.sort(playersList, (p1, p2) -> CountryManager.getRank(p2).getPower() - CountryManager.getRank(p1).getPower());
         playersList.forEach(player -> membersList.add(
                 ((CountryManager.getRank(player).getPrefix() != null && !CountryManager.getRank(player).getPrefix().isEmpty())
                         ? CountryManager.getRank(player).getPrefix().replace("&", "§") + " "
                         : "")
                         + player.getName() + "§2"));
         String members = Arrays.toString(membersList.toArray());
+        members = members.substring(1, members.length() - 1);
         sender.sendMessage("§aMembers: §2" + members);
         sender.sendMessage("§aRanks: §2" + Arrays.toString(country.getRanks().stream().sorted(Comparator.comparingInt(Rank::getPower)).map(Rank::getName).toArray()));
         sender.sendMessage("");

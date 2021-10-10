@@ -31,7 +31,7 @@ public class CmdClose extends SubCommand {
             player.sendMessage(Main.getMessages().getMessage("nocountry"));
             return false;
         }
-        if (!Permission.hasFactionPermission(player, CountryPermission.OPEN_FACTION)) {
+        if (!Permission.hasCountryPermission(player, CountryPermission.OPEN_FACTION)) {
             player.sendMessage(Main.getMessages().getMessage("notcountrypermission"));
             return false;
         }

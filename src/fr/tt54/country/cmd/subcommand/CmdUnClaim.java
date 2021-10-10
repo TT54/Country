@@ -31,7 +31,7 @@ public class CmdUnClaim extends SubCommand {
             player.sendMessage(Main.getMessages().getMessage("nocountry"));
             return false;
         }
-        if (!Permission.hasFactionPermission(player, CountryPermission.CLAIM)) {
+        if (!Permission.hasCountryPermission(player, CountryPermission.CLAIM)) {
             player.sendMessage(Main.getMessages().getMessage("notcountrypermission"));
             return false;
         }

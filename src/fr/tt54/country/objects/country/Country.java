@@ -1,5 +1,6 @@
 package fr.tt54.country.objects.country;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.OfflinePlayer;
 
@@ -11,7 +12,7 @@ public class Country {
     private UUID uuid;
     private String name;
     private Map<OfflinePlayer, Rank> members = new HashMap<>();
-    private OfflinePlayer leader;
+    private UUID leader;
     private int level;
     private int maxClaims;
     private List<Chunk> chunksClaimed = new ArrayList<>();
@@ -22,7 +23,7 @@ public class Country {
     public Country(UUID uuid, String name, OfflinePlayer leader, List<Rank> ranks) {
         this.uuid = uuid;
         this.name = name;
-        this.leader = leader;
+        this.leader = leader.getUniqueId();
         this.ranks = ranks;
         this.members.put(leader, getMaxRank(ranks));
         this.opened = false;
@@ -32,7 +33,7 @@ public class Country {
         this.uuid = uuid;
         this.name = name;
         this.members = members;
-        this.leader = leader;
+        this.leader = leader.getUniqueId();
         this.level = level;
         this.maxClaims = maxClaims;
         this.chunksClaimed = chunksClaimed;
@@ -93,11 +94,15 @@ public class Country {
     }
 
     public OfflinePlayer getLeader() {
-        return leader;
+        return Bukkit.getOfflinePlayer(leader);
     }
 
     public void setLeader(OfflinePlayer leader) {
-        this.leader = leader;
+        List<Rank> r = this.ranks.subList(0, this.ranks.size());
+        r.sort((r1, r2) -> r2.getPower() - r1.getPower());
+        this.setRank(Bukkit.getOfflinePlayer(this.leader), r.get(1));
+        this.leader = leader.getUniqueId();
+        this.setRank(leader, r.get(0));
     }
 
     public void setUuid(UUID uuid) {
@@ -126,6 +131,16 @@ public class Country {
 
     public void setChunksClaimed(List<Chunk> chunksClaimed) {
         this.chunksClaimed = chunksClaimed;
+    }
+
+    public void claimChunk(Chunk chunk) {
+        if (!this.chunksClaimed.contains(chunk)) {
+            this.chunksClaimed.add(chunk);
+        }
+    }
+
+    public void unclaimChunk(Chunk chunk) {
+        this.chunksClaimed.remove(chunk);
     }
 
     public List<Rank> getRanks() {

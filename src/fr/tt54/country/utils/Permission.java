@@ -25,7 +25,7 @@ public class Permission {
         return sender.hasPermission("*");
     }
 
-    public static boolean hasFactionPermission(OfflinePlayer player, CountryPermission countryPermission) {
+    public static boolean hasCountryPermission(OfflinePlayer player, CountryPermission countryPermission) {
         if (CountryManager.hasCountry(player) && CountryManager.getRank(player) != null) {
             return CountryManager.getRank(player).hasPermission(countryPermission);
         }

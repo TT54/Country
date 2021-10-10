@@ -7,11 +7,22 @@ import java.util.Map;
 
 public enum ClaimPermission {
 
-    OPEN_CHEST,
-    BUILD,
-    USE_BUTTON,
-    USE_PRESSURE_PLATE,
-    INTERACT;
+    BUILD("Allow to build in this claim."),
+    OPEN_CHEST("Allow to open chests and containers in this claim."),
+    USE_BUTTON("Use buttons and levers in this claim."),
+    OPEN_DOOR("Open doors and trapdoors in this claim."),
+    INTERACT("Interact with other blocks in this claim.");
+
+
+    private String description;
+
+    ClaimPermission(String description) {
+        this.description = description;
+    }
+
+    public String getDescription() {
+        return description;
+    }
 
     private static Map<String, ClaimPermission> permissions = new HashMap<>();
 
@@ -38,7 +49,7 @@ public enum ClaimPermission {
         for (ClaimPermission permission : list) {
             str += permission.name() + ",";
         }
-        return str.substring(0, str.length() - 1);
+        return str.substring(0, Math.max(str.length() - 1, 0));
     }
 
     public static List<ClaimPermission> getListFromString(String str) {
