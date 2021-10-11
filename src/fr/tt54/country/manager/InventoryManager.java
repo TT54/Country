@@ -24,9 +24,9 @@ public class InventoryManager {
             for (int i = 0; i < perms.size(); i++) {
                 ItemStack item;
                 if (rank.hasPermission(perms.get(i))) {
-                    item = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 5);
+                    item = new ItemStack(Material.getMaterial("STAINED_GLASS_PANE"), 1, (short) 5);
                 } else {
-                    item = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14);
+                    item = new ItemStack(Material.getMaterial("STAINED_GLASS_PANE"), 1, (short) 14);
                 }
                 ItemMeta meta = item.getItemMeta();
                 meta.setDisplayName(((rank.hasPermission(perms.get(i))) ? "§2" : "§4") + perms.get(i).name());
@@ -63,6 +63,51 @@ public class InventoryManager {
             inv.setItem(5 * 9, quitButton);
         } else {
             //TODO
+
+
+            List<CountryPermission> perms = Arrays.asList(CountryPermission.values());
+            for (int i = 0; i < perms.size(); i++) {
+                ItemStack item;
+                if (rank.hasPermission(perms.get(i))) {
+                    item = new ItemStack(Material.getMaterial("LIME_STAINED_GLASS_PANE"));
+                } else {
+                    item = new ItemStack(Material.getMaterial("RED_STAINED_GLASS_PANE"));
+                }
+                ItemMeta meta = item.getItemMeta();
+                meta.setDisplayName(((rank.hasPermission(perms.get(i))) ? "§2" : "§4") + perms.get(i).name());
+
+                List<String> lore = new ArrayList<>();
+                String description = perms.get(i).getDescription();
+
+                if (description.length() > 30) {
+                    int lastchar = -1;
+                    for (int j = 0; j < description.length(); j++) {
+                        if ((description.charAt(j) == ' ' && j - lastchar > 30) || j + 1 == description.length()) {
+                            lore.add("§7" + description.substring(lastchar + 1, j));
+                            lastchar = j;
+                        }
+                    }
+                } else {
+                    lore.add("§7" + description);
+                }
+
+                meta.setLore(lore);
+                item.setItemMeta(meta);
+                inv.setItem(i * 2, item);
+            }
+            ItemStack saveButton = new ItemStack(Material.PAPER);
+            ItemMeta meta = saveButton.getItemMeta();
+            meta.setDisplayName("§6Save and quit");
+            saveButton.setItemMeta(meta);
+            inv.setItem(53, saveButton);
+
+            ItemStack quitButton = new ItemStack(Material.BARRIER);
+            meta = quitButton.getItemMeta();
+            meta.setDisplayName("§4Quit without saving");
+            quitButton.setItemMeta(meta);
+            inv.setItem(5 * 9, quitButton);
+
+
         }
 
         player.openInventory(inv);

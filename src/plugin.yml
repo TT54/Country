@@ -1,7 +1,8 @@
 main: fr.tt54.country.Main
 name: Country
 author: TT54
-version: SNAPSHOT-0.2.2
+version: SNAPSHOT-0.3.1
+api-version: 1.13
 commands:
   country:
     description: All commands of the plugin

@@ -4,6 +4,7 @@ import fr.tt54.country.Main;
 import fr.tt54.country.manager.CountryManager;
 import fr.tt54.country.objects.country.Rank;
 import fr.tt54.country.objects.permissions.CountryPermission;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -15,44 +16,84 @@ public class InventoryListener implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        if (event.getInventory() != null && event.getInventory().getName() != null && !event.getInventory().getName().isEmpty()) {
-            if (event.getInventory().getName().contains("'s §2permissions")) {
+        if (!event.getView().getTitle().isEmpty()) {
+            if (event.getView().getTitle().contains("'s §2permissions")) {
                 if (event.getCurrentItem() != null && event.getCurrentItem().getType() != Material.AIR) {
-                    if (event.getCurrentItem().getType() == Material.STAINED_GLASS_PANE) {
-                        if (event.getCurrentItem().getDurability() == 5) {
-                            event.getCurrentItem().setDurability((short) 14);
-                        } else {
-                            event.getCurrentItem().setDurability((short) 5);
-                        }
-                    } else if (event.getCurrentItem().getType() == Material.BARRIER
-                            && event.getCurrentItem().hasItemMeta()
-                            && event.getCurrentItem().getItemMeta().hasDisplayName()
-                            && event.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("§4Quit without saving")) {
-                        event.getWhoClicked().closeInventory();
-                    } else if (event.getCurrentItem().getType() == Material.PAPER
-                            && event.getCurrentItem().hasItemMeta()
-                            && event.getCurrentItem().getItemMeta().hasDisplayName()
-                            && event.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("§6Save and quit")) {
-                        if (CountryManager.getPlayerCountry((Player) event.getWhoClicked()) != null) {
-                            Rank rank = CountryManager.getPlayerCountry((Player) event.getWhoClicked()).getRank(event.getInventory().getName().split("'")[0].substring(2));
-                            for (ItemStack is : event.getClickedInventory().getContents()) {
-                                if (is != null && is.getType() == Material.STAINED_GLASS_PANE && is.hasItemMeta() && is.getItemMeta().hasDisplayName()) {
-                                    String name = is.getItemMeta().getDisplayName().substring(2);
-                                    CountryPermission permission = CountryPermission.getPermission(name);
-                                    if (is.getDurability() == 5 && !rank.hasPermission(permission)) {
-                                        rank.addPermission(permission);
-                                    } else if (is.getDurability() == 14 && rank.hasPermission(permission)) {
-                                        rank.removePermission(permission);
+                    if (Integer.parseInt(Bukkit.getServer().getVersion().split("\\.")[1]) < 13) {
+
+                        if (event.getCurrentItem().getType() == Material.getMaterial("STAINED_GLASS_PANE")) {
+                            if (event.getCurrentItem().getDurability() == 5) {
+                                event.getCurrentItem().setDurability((short) 14);
+                            } else {
+                                event.getCurrentItem().setDurability((short) 5);
+                            }
+                        } else if (event.getCurrentItem().getType() == Material.BARRIER
+                                && event.getCurrentItem().hasItemMeta()
+                                && event.getCurrentItem().getItemMeta().hasDisplayName()
+                                && event.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("§4Quit without saving")) {
+                            event.getWhoClicked().closeInventory();
+                        } else if (event.getCurrentItem().getType() == Material.PAPER
+                                && event.getCurrentItem().hasItemMeta()
+                                && event.getCurrentItem().getItemMeta().hasDisplayName()
+                                && event.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("§6Save and quit")) {
+                            if (CountryManager.getPlayerCountry((Player) event.getWhoClicked()) != null) {
+                                Rank rank = CountryManager.getPlayerCountry((Player) event.getWhoClicked()).getRank(event.getView().getTitle().split("'")[0].substring(2));
+                                for (ItemStack is : event.getClickedInventory().getContents()) {
+                                    if (is != null && is.getType() == Material.getMaterial("STAINED_GLASS_PANE") && is.hasItemMeta() && is.getItemMeta().hasDisplayName()) {
+                                        String name = is.getItemMeta().getDisplayName().substring(2);
+                                        CountryPermission permission = CountryPermission.getPermission(name);
+                                        if (is.getDurability() == 5 && !rank.hasPermission(permission)) {
+                                            rank.addPermission(permission);
+                                        } else if (is.getDurability() == 14 && rank.hasPermission(permission)) {
+                                            rank.removePermission(permission);
+                                        }
                                     }
                                 }
+                                CountryManager.saveCountry(CountryManager.getPlayerCountry((Player) event.getWhoClicked()));
+                                event.getWhoClicked().sendMessage(Main.getMessages().getMessage("permissionsedited", "%rank%", rank.getName()));
                             }
-                            CountryManager.saveCountry(CountryManager.getPlayerCountry((Player) event.getWhoClicked()));
-                            event.getWhoClicked().sendMessage(Main.getMessages().getMessage("permissionsedited", "%rank%", rank.getName()));
+                            event.getWhoClicked().closeInventory();
                         }
-                        event.getWhoClicked().closeInventory();
+                    } else {
+
+
+                        if (event.getCurrentItem().getType().name().contains("STAINED_GLASS_PANE")) {
+                            if (event.getCurrentItem().getType() == Material.getMaterial("LIME_STAINED_GLASS_PANE")) {
+                                event.getCurrentItem().setType(Material.getMaterial("RED_STAINED_GLASS_PANE"));
+                            } else {
+                                event.getCurrentItem().setType(Material.getMaterial("LIME_STAINED_GLASS_PANE"));
+                            }
+                        } else if (event.getCurrentItem().getType() == Material.BARRIER
+                                && event.getCurrentItem().hasItemMeta()
+                                && event.getCurrentItem().getItemMeta().hasDisplayName()
+                                && event.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("§4Quit without saving")) {
+                            event.getWhoClicked().closeInventory();
+                        } else if (event.getCurrentItem().getType() == Material.PAPER
+                                && event.getCurrentItem().hasItemMeta()
+                                && event.getCurrentItem().getItemMeta().hasDisplayName()
+                                && event.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("§6Save and quit")) {
+                            if (CountryManager.getPlayerCountry((Player) event.getWhoClicked()) != null) {
+                                Rank rank = CountryManager.getPlayerCountry((Player) event.getWhoClicked()).getRank(event.getView().getTitle().split("'")[0].substring(2));
+                                for (ItemStack is : event.getClickedInventory().getContents()) {
+                                    if (is != null && is.getType().name().contains("STAINED_GLASS_PANE") && is.hasItemMeta() && is.getItemMeta().hasDisplayName()) {
+                                        String name = is.getItemMeta().getDisplayName().substring(2);
+                                        CountryPermission permission = CountryPermission.getPermission(name);
+                                        if (is.getType() == Material.getMaterial("LIME_STAINED_GLASS_PANE") && !rank.hasPermission(permission)) {
+                                            rank.addPermission(permission);
+                                        } else if (is.getType() == Material.getMaterial("RED_STAINED_GLASS_PANE") && rank.hasPermission(permission)) {
+                                            rank.removePermission(permission);
+                                        }
+                                    }
+                                }
+                                CountryManager.saveCountry(CountryManager.getPlayerCountry((Player) event.getWhoClicked()));
+                                event.getWhoClicked().sendMessage(Main.getMessages().getMessage("permissionsedited", "%rank%", rank.getName()));
+                            }
+                            event.getWhoClicked().closeInventory();
+                        }
+
                     }
+                    event.setCancelled(true);
                 }
-                event.setCancelled(true);
             }
         }
     }
