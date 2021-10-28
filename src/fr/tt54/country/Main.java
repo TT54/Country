@@ -6,15 +6,15 @@ import fr.tt54.country.listener.ClaimListener;
 import fr.tt54.country.listener.ConnectionListener;
 import fr.tt54.country.listener.InventoryListener;
 import fr.tt54.country.listener.PlayerListener;
-import fr.tt54.country.manager.ClaimManager;
-import fr.tt54.country.manager.CountryManager;
-import fr.tt54.country.manager.InviteManager;
+import fr.tt54.country.manager.*;
 import fr.tt54.country.objects.country.Rank;
 import fr.tt54.country.utils.Messages;
 import fr.tt54.country.utils.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.logging.Logger;
 
 public class Main extends JavaPlugin {
 
@@ -26,11 +26,15 @@ public class Main extends JavaPlugin {
 
     private static Main instance;
 
+    private Logger log;
+    private boolean loggingEnable;
     private String noCountryName = "None";
 
     @Override
     public void onEnable() {
+        this.log = this.getLogger();
         instance = this;
+
         this.reload();
 
         this.getCommand("country").setExecutor(new CountryCommand());
@@ -41,11 +45,13 @@ public class Main extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new ClaimListener(), this);
         this.getServer().getPluginManager().registerEvents(new InventoryListener(), this);
         SubCommand.registerCommands();
+
+        log.info(getMessages().getMessage("pluginenable"));
     }
 
     @Override
     public void onDisable() {
-
+        log.info(getMessages().getMessage("plugindisable"));
     }
 
     public void reload() {
@@ -56,11 +62,14 @@ public class Main extends JavaPlugin {
         CountryManager.enable();
         InviteManager.enable();
         ClaimManager.enable();
+        RelationManager.enable();
+        WarManager.enable();
 
         this.noCountryName = this.getConfig().getString("nocountryname");
+        this.loggingEnable = this.getConfig().getBoolean("enablelogging");
 
         if (!this.getConfig().getString("version").equalsIgnoreCase(CONFIG_VERSION)) {
-            System.out.println(MESSAGES.getMessage("badconfigversion", "%configversion%", this.getConfig().getString("configversion"), "%newversion%", CONFIG_VERSION));
+            log.warning(MESSAGES.getMessage("badconfigversion", "%configversion%", this.getConfig().getString("configversion"), "%newversion%", CONFIG_VERSION));
             for (Player player : Bukkit.getOnlinePlayers()) {
                 if (Permission.hasPermission(player, "topluck.reload")) {
                     player.sendMessage("");
@@ -69,7 +78,7 @@ public class Main extends JavaPlugin {
             }
         }
         if (!MESSAGES.getMessage("version").equalsIgnoreCase(MESSAGES_VERSION)) {
-            System.out.println(MESSAGES.getMessage("badmessagesversion", "%messagesversion%", MESSAGES.getMessage("version"), "%newversion%", MESSAGES_VERSION));
+            log.warning(MESSAGES.getMessage("badmessagesversion", "%messagesversion%", MESSAGES.getMessage("version"), "%newversion%", MESSAGES_VERSION));
             for (Player player : Bukkit.getOnlinePlayers()) {
                 if (Permission.hasPermission(player, "topluck.reload")) {
                     player.sendMessage("");
@@ -89,5 +98,19 @@ public class Main extends JavaPlugin {
 
     public String getNoCountryName() {
         return this.noCountryName;
+    }
+
+    public Logger getLog() {
+        return this.log;
+    }
+
+    public void log(String message) {
+        if (this.loggingEnable)
+            this.getLog().info(message);
+    }
+
+    public void logAlert(String message) {
+        if (this.loggingEnable)
+            this.getLog().warning(message);
     }
 }

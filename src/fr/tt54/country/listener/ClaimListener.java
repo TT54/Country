@@ -192,16 +192,19 @@ public class ClaimListener implements Listener {
 
             if (claimFrom != null && claimTo == null) {
                 event.getPlayer().sendMessage(Main.getMessages().getMessage("leaveclaim", "%country%", claimFrom.getOwner().getName()));
+                Main.getInstance().log(event.getPlayer().getName() + " left " + claimFrom.getOwner().getName() + "'s claim");
                 return;
             }
 
             if (claimFrom == null && claimTo != null) {
                 event.getPlayer().sendMessage(Main.getMessages().getMessage("joinclaim", "%country%", claimTo.getOwner().getName()));
+                Main.getInstance().log(event.getPlayer().getName() + " entered " + claimTo.getOwner().getName() + "'s claim");
                 return;
             }
 
             if (claimFrom.getOwner() != claimTo.getOwner()) {
                 event.getPlayer().sendMessage(Main.getMessages().getMessage("moveclaim", "%countryFrom%", claimFrom.getOwner().getName(), "%countryTo%", claimTo.getOwner().getName()));
+                Main.getInstance().log(event.getPlayer().getName() + " left " + claimFrom.getOwner().getName() + "'s claim and joined " + claimTo.getOwner().getName() + "'s claim");
             }
         }
     }

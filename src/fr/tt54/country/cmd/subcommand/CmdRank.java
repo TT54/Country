@@ -202,6 +202,11 @@ public class CmdRank extends SubCommand {
                         return false;
                     }
 
+                    if (target.getUniqueId() == player.getUniqueId()) {
+                        player.sendMessage(Main.getMessages().getMessage("executeyourself"));
+                        return false;
+                    }
+
                     String name = args[2];
 
                     if (!country.hasRank(name)) {

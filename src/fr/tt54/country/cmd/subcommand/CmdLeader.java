@@ -40,6 +40,10 @@ public class CmdLeader extends SubCommand {
         }
 
         OfflinePlayer p = Bukkit.getOfflinePlayer(args[0]);
+        if (p.getUniqueId() == player.getUniqueId()) {
+            player.sendMessage(Main.getMessages().getMessage("executeyourself"));
+            return false;
+        }
         if (CountryManager.hasCountry(p) && CountryManager.getPlayerCountry(p) == CountryManager.getPlayerCountry(player)) {
             CountryManager.changeLeader(CountryManager.getPlayerCountry(player), p);
         } else {

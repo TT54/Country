@@ -3,9 +3,8 @@ package fr.tt54.country.cmd.subcommand;
 import fr.tt54.country.Main;
 import fr.tt54.country.cmd.SubCommand;
 import fr.tt54.country.manager.CountryManager;
-import fr.tt54.country.manager.InventoryManager;
+import fr.tt54.country.manager.WarManager;
 import fr.tt54.country.objects.country.Country;
-import fr.tt54.country.objects.country.Rank;
 import fr.tt54.country.objects.permissions.CountryPermission;
 import fr.tt54.country.utils.Permission;
 import org.bukkit.command.CommandSender;
@@ -14,9 +13,10 @@ import org.bukkit.entity.Player;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class CmdPermission extends SubCommand {
-    public CmdPermission() {
-        super("permission", new String[]{"perm"}, "Edit rank permissions");
+public class CmdForfeit extends SubCommand {
+
+    public CmdForfeit() {
+        super("forfeit", new String[]{}, "Forfeit a war with another country");
     }
 
     @Override
@@ -31,43 +31,44 @@ public class CmdPermission extends SubCommand {
             player.sendMessage(Main.getMessages().getMessage("nocountry"));
             return false;
         }
-        if (!Permission.hasCountryPermission(player, CountryPermission.EDIT_PERMISSIONS)) {
+        Country country = CountryManager.getPlayerCountry(player);
+
+        if (!Permission.hasCountryPermission(player, CountryPermission.MANAGE_RELATIONS)) {
             player.sendMessage(Main.getMessages().getMessage("notcountrypermission"));
             return false;
         }
 
         if (args.length != 1) {
-            player.sendMessage(Main.getMessages().getBadUsageMessage("/country " + command + " <rank>"));
+            player.sendMessage(Main.getMessages().getBadUsageMessage("/country " + command + " <country>"));
             return false;
         }
 
-        Country country = CountryManager.getPlayerCountry(player);
-        if (country.getRank(args[0]) == null) {
-            player.sendMessage(Main.getMessages().getMessage("rankdoesntexist", "%rank%", args[0]));
+        if (!CountryManager.existCountry(args[0])) {
+            player.sendMessage(Main.getMessages().getMessage("countrynotexist", "%country%", args[0]));
             return false;
         }
-        Rank rank = country.getRank(args[0]);
+        Country target = CountryManager.getCountry(args[0]);
 
-        if (rank.getPower() >= CountryManager.getRank(player).getPower()) {
-            player.sendMessage(Main.getMessages().getMessage("canteditrankwithmorepower"));
+        if (target == country) {
+            player.sendMessage(Main.getMessages().getMessage("relationsyourself"));
             return false;
         }
 
-        InventoryManager.openPermissionInventory(player, country, rank);
+        if (!WarManager.areInWar(country, target)) {
+            player.sendMessage(Main.getMessages().getMessage("notinwar", "%country%", target.getName()));
+            return false;
+        }
 
+        WarManager.onWarWin(target, WarManager.getActualWarBetween(country, target));
         return true;
     }
 
     @Override
     public List<String> onTabComplete(CommandSender sender, SubCommand subCommand, String command, String[] args) {
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
-            if (CountryManager.hasCountry(player)) {
-                if (args.length == 1) {
-                    return CountryManager.getPlayerCountry(player).getRanks().stream().map(Rank::getName).filter(name -> name.toLowerCase().startsWith(args[0].toLowerCase())).collect(Collectors.toList());
-                }
-            }
+        if (args.length == 1) {
+            return CountryManager.countriesMap.values().stream().map(Country::getName).filter(name -> name.toLowerCase().startsWith(args[0].toLowerCase())).collect(Collectors.toList());
         }
         return null;
     }
+
 }

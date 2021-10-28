@@ -1,5 +1,7 @@
 package fr.tt54.country.objects.country;
 
+import fr.tt54.country.manager.CountryManager;
+import fr.tt54.country.manager.RelationManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.OfflinePlayer;
@@ -11,13 +13,19 @@ public class Country {
 
     private UUID uuid;
     private String name;
-    private Map<OfflinePlayer, Rank> members = new HashMap<>();
+    private Map<UUID, Rank> members = new HashMap<>();
     private UUID leader;
     private int level;
+    private int points;
     private int maxClaims;
     private List<Chunk> chunksClaimed = new ArrayList<>();
     private List<Rank> ranks;
     private boolean opened;
+
+    private int levelPoints;
+
+    private Map<UUID, Relations> relations = new HashMap<>();
+    private Map<UUID, Relations> relationsRequests = new HashMap<>();
 
 
     public Country(UUID uuid, String name, OfflinePlayer leader, List<Rank> ranks) {
@@ -25,20 +33,33 @@ public class Country {
         this.name = name;
         this.leader = leader.getUniqueId();
         this.ranks = ranks;
-        this.members.put(leader, getMaxRank(ranks));
+        this.members.put(leader.getUniqueId(), getMaxRank(ranks));
         this.opened = false;
     }
 
-    public Country(UUID uuid, String name, Map<OfflinePlayer, Rank> members, OfflinePlayer leader, int level, int maxClaims, List<Chunk> chunksClaimed, List<Rank> ranks, boolean opened) {
+    public Country(UUID uuid, String name, Map<OfflinePlayer, Rank> members, OfflinePlayer leader, int level, int points, int maxClaims, List<Chunk> chunksClaimed, List<Rank> ranks, boolean opened) {
         this.uuid = uuid;
         this.name = name;
-        this.members = members;
+        for (OfflinePlayer player : members.keySet()) {
+            this.members.put(player.getUniqueId(), members.get(player));
+        }
         this.leader = leader.getUniqueId();
         this.level = level;
+        this.points = points;
         this.maxClaims = maxClaims;
         this.chunksClaimed = chunksClaimed;
         this.ranks = ranks;
         this.opened = opened;
+
+        CountryManager.calculLevel(this);
+    }
+
+    public int getLevelPoints() {
+        return levelPoints;
+    }
+
+    public void setLevelPoints(int levelPoints) {
+        this.levelPoints = levelPoints;
     }
 
     public static Rank getMaxRank(List<Rank> ranks) {
@@ -76,12 +97,16 @@ public class Country {
     }
 
     public Map<OfflinePlayer, Rank> getMembers() {
+        Map<OfflinePlayer, Rank> members = new HashMap<>();
+        for (UUID player : this.members.keySet()) {
+            members.put(Bukkit.getOfflinePlayer(player), this.members.get(player));
+        }
         return members;
     }
 
     public void addMember(OfflinePlayer member) {
         if (!this.hasMember(member))
-            this.members.put(member, getMinRank(this.ranks));
+            this.members.put(member.getUniqueId(), getMinRank(this.ranks));
     }
 
     public void removeMember(OfflinePlayer player) {
@@ -115,6 +140,23 @@ public class Country {
 
     public void setLevel(int level) {
         this.level = level;
+        CountryManager.calculMaxClaims(this);
+    }
+
+    public void addPoints(int amount) {
+        this.points += amount;
+        CountryManager.calculLevel(this);
+        CountryManager.saveCountry(this);
+    }
+
+    public int getPoints() {
+        return points;
+    }
+
+    public void setPoints(int points) {
+        this.points = points;
+        CountryManager.calculLevel(this);
+        CountryManager.saveCountry(this);
     }
 
     public int getMaxClaims() {
@@ -152,7 +194,9 @@ public class Country {
     }
 
     public void setMembers(Map<OfflinePlayer, Rank> members) {
-        this.members = members;
+        for (OfflinePlayer player : members.keySet()) {
+            this.members.put(player.getUniqueId(), members.get(player));
+        }
     }
 
     public void setOpened(boolean opened) {
@@ -193,7 +237,7 @@ public class Country {
             }
         }
 
-        for (OfflinePlayer player : members.entrySet().stream().filter(offlinePlayerRankEntry -> offlinePlayerRankEntry.getValue().getName().equalsIgnoreCase(name)).collect(Collectors
+        for (OfflinePlayer player : this.getMembers().entrySet().stream().filter(offlinePlayerRankEntry -> offlinePlayerRankEntry.getValue().getName().equalsIgnoreCase(name)).collect(Collectors
                 .toList()).stream().map(Map.Entry::getKey).collect(Collectors.toList())) {
             setRank(player, this.getRank("member"));
         }
@@ -202,7 +246,7 @@ public class Country {
     }
 
     public void setRank(OfflinePlayer player, Rank rank) {
-        this.members.put(player, rank);
+        this.members.put(player.getUniqueId(), rank);
     }
 
     public void setRankPower(String name, int power) {
@@ -215,5 +259,61 @@ public class Country {
         if (hasRank(name)) {
             getRank(name).setPrefix(prefix);
         }
+    }
+
+    public void clearRelations() {
+        this.relations.clear();
+    }
+
+    public void clearRelationsRequests() {
+        this.relationsRequests.clear();
+    }
+
+    public void setRelationWith(UUID country, Relations relation) {
+        this.relations.put(country, relation);
+    }
+
+    public void setRelationRequestWith(UUID country, Relations relation) {
+        this.relationsRequests.put(country, relation);
+        RelationManager.saveRelations(this);
+    }
+
+    public boolean hasRelation(UUID country, Relations relation) {
+        if (relation == Relations.NEUTRAL)
+            return !this.relations.containsKey(country);
+        return this.relations.get(country) == relation;
+    }
+
+    public boolean hasRelationRequests(UUID country, Relations relation) {
+        return this.relationsRequests.get(country) == relation;
+    }
+
+    public void removeRelation(UUID country) {
+        this.relations.remove(country);
+    }
+
+    public void removeRelationRequests(UUID country) {
+        this.relationsRequests.remove(country);
+        RelationManager.saveRelations(this);
+    }
+
+    public Relations getRelationWith(UUID country) {
+        return this.relations.getOrDefault(country, Relations.NEUTRAL);
+    }
+
+    public Relations getRelationRequestsWith(UUID country) {
+        return this.relationsRequests.getOrDefault(country, Relations.NEUTRAL);
+    }
+
+    public Map<UUID, Relations> getRelations() {
+        return relations;
+    }
+
+    public List<UUID> getRelations(Relations relation) {
+        return relations.keySet().stream().filter(uuid -> getRelationWith(uuid) == relation).map(uuid -> CountryManager.getCountry(uuid).getUuid()).collect(Collectors.toList());
+    }
+
+    public Map<UUID, Relations> getRelationsRequests() {
+        return relationsRequests;
     }
 }

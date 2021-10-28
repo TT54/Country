@@ -1,5 +1,6 @@
 package fr.tt54.country.manager;
 
+import fr.tt54.country.Main;
 import fr.tt54.country.objects.country.Claim;
 import fr.tt54.country.objects.country.Country;
 import fr.tt54.country.objects.permissions.ClaimPermission;
@@ -35,6 +36,7 @@ public class ClaimManager {
         claims.put(chunk, claim);
 
         country.claimChunk(chunk);
+        Main.getInstance().log(country.getName() + " claimed a chunk in " + chunk.getX() * 16 + " " + chunk.getZ() * 16);
 
         saveClaim(claim, true);
     }
@@ -66,6 +68,8 @@ public class ClaimManager {
             chunkClaimed.remove(chunk);
             claims.remove(chunk);
             country.unclaimChunk(chunk);
+
+            Main.getInstance().log(country.getName() + " unclaimed a chunk in " + chunk.getX() * 16 + " " + chunk.getZ() * 16);
         }
     }
 
@@ -125,13 +129,11 @@ public class ClaimManager {
 
                     claim.getOwner().claimChunk(chunk);
 
-                    System.out.println(claim.getOwner().getName());
-
                     chunkClaimed.put(chunk, claim.getOwner().getUuid());
                     claims.put(chunk, claim);
                 }
             } catch (NullPointerException npe) {
-                System.err.println("World '" + worldUUID + "' can't be loaded !");
+                Main.getInstance().logAlert("World '" + worldUUID + "' can't be loaded !");
             }
         }
     }

@@ -5,9 +5,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
+import java.io.*;
 
 public class FileManager {
 
@@ -49,11 +47,63 @@ public class FileManager {
         }
     }
 
+    public static void updateYmlFile(String internalName, String externalName) {
+        File internal = getInternalFile(internalName);
+        FileConfiguration internalFile = YamlConfiguration.loadConfiguration(internal);
+        FileConfiguration externalFile = YamlConfiguration.loadConfiguration(getFile(externalName, Main.getInstance()));
+        boolean edited = false;
+
+        for (String key : internalFile.getKeys(false)) {
+            if (externalFile.get(key) == null) {
+                externalFile.set(key, internalFile.get(key));
+                edited = true;
+            }
+        }
+        externalFile.set("version", internalFile.get("version"));
+
+        internal.delete();
+
+        if (edited)
+            saveFile(externalFile, externalName);
+    }
+
     public static File getInternalFile(String fileName) {
-        URL url = FileManager.class.getClassLoader().getResource(fileName);
-        if (url != null)
-            return new File(url.getFile());
-        return null;
+        if (fileName != null && !fileName.equals("")) {
+            String resourcePath = fileName + ".yml";
+            resourcePath = resourcePath.replace('\\', '/');
+            InputStream in = Main.getInstance().getResource(resourcePath);
+
+            if (in != null) {
+                File outFile = new File(Main.getInstance().getDataFolder(), "copy" + resourcePath);
+                int lastIndex = resourcePath.lastIndexOf(47);
+                File outDir = new File(Main.getInstance().getDataFolder(), resourcePath.substring(0, lastIndex >= 0 ? lastIndex : 0));
+                if (!outDir.exists()) {
+                    outDir.mkdirs();
+                }
+
+                try {
+                    if (!outFile.exists())
+                        outFile.createNewFile();
+
+                    OutputStream out = new FileOutputStream(outFile);
+                    byte[] buf = new byte[1024];
+
+                    int len;
+                    while ((len = in.read(buf)) > 0) {
+                        out.write(buf, 0, len);
+                    }
+
+                    out.close();
+                    in.close();
+
+                    return outFile;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return new File(Main.getInstance().getDataFolder(), fileName + ".yml");
     }
 
 }

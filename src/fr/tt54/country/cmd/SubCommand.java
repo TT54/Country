@@ -51,6 +51,13 @@ public abstract class SubCommand {
         registerCommand(new CmdKick());
         registerCommand(new CmdLeader());
         registerCommand(new CmdPermission());
+        registerCommand(new CmdAlly());
+        registerCommand(new CmdEntente());
+        registerCommand(new CmdEnemy());
+        registerCommand(new CmdNeutral());
+        registerCommand(new CmdWar());
+        registerCommand(new CmdForfeit());
+        registerCommand(new CmdList());
     }
 
     public static void registerCommand(SubCommand subCommand) {

@@ -1,4 +1,4 @@
-version: "1.0"
+version: "0.1.1"
 
 messagenotfound: "&cThis message was not found !"
 
@@ -12,3 +12,6 @@ maxchars: 10
 
 #If true, enable chat messages when a player enter and leave a claim
 claimmessage: true
+
+#If true, each action in the plugin will be logged in the console
+enablelogging: true

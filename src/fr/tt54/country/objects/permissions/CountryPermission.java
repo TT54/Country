@@ -7,19 +7,20 @@ public enum CountryPermission {
 
     INVITE_PLAYER("Allow to invite players in the faction."),
     OPEN_FACTION("Allow to open and close the faction."),
+    KICK("Kick players from the faction."),
     CREATE_RANK("Allow to create new faction ranks."),
     DELETE_RANK("Allow to delete faction ranks."),
     SET_RANK("Allow to set a rank to a player."),
     EDIT_RANK("Allow to modify a faction rank."),
-    EDIT_PERMISSIONS("Allow to modify rank permissions"),
+    EDIT_PERMISSIONS("Allow to modify rank permissions."),
+    MANAGE_RELATIONS("Allow to modify your relations with other countries."),
     CLAIM("Allow to claim and unclaim chunks."),
     ACCESS_CLAIM("Allow to access players in claimed chunks."),
     BUILD("Allow to build in faction's claims."),
     OPEN_CHEST("Allow to open chests and containers in faction's claims."),
     USE_BUTTON("Use buttons and levers in faction's claims."),
     OPEN_DOOR("Open doors and trapdoors in faction's claims."),
-    INTERACT("Interact with other blocks in faction's claims."),
-    KICK("Kick players from the faction");
+    INTERACT("Interact with other blocks in faction's claims.");
 
     private String description;
 

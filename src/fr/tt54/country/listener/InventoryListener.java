@@ -2,6 +2,7 @@ package fr.tt54.country.listener;
 
 import fr.tt54.country.Main;
 import fr.tt54.country.manager.CountryManager;
+import fr.tt54.country.objects.country.Country;
 import fr.tt54.country.objects.country.Rank;
 import fr.tt54.country.objects.permissions.CountryPermission;
 import org.bukkit.Bukkit;
@@ -36,7 +37,8 @@ public class InventoryListener implements Listener {
                                 && event.getCurrentItem().hasItemMeta()
                                 && event.getCurrentItem().getItemMeta().hasDisplayName()
                                 && event.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("§6Save and quit")) {
-                            if (CountryManager.getPlayerCountry((Player) event.getWhoClicked()) != null) {
+                            Country country = CountryManager.getPlayerCountry((Player) event.getWhoClicked());
+                            if (country != null) {
                                 Rank rank = CountryManager.getPlayerCountry((Player) event.getWhoClicked()).getRank(event.getView().getTitle().split("'")[0].substring(2));
                                 for (ItemStack is : event.getClickedInventory().getContents()) {
                                     if (is != null && is.getType() == Material.getMaterial("STAINED_GLASS_PANE") && is.hasItemMeta() && is.getItemMeta().hasDisplayName()) {
@@ -49,7 +51,8 @@ public class InventoryListener implements Listener {
                                         }
                                     }
                                 }
-                                CountryManager.saveCountry(CountryManager.getPlayerCountry((Player) event.getWhoClicked()));
+                                CountryManager.saveCountry(country);
+                                Main.getInstance().log(event.getWhoClicked().getName() + " edited " + country.getName() + "'s permissions");
                                 event.getWhoClicked().sendMessage(Main.getMessages().getMessage("permissionsedited", "%rank%", rank.getName()));
                             }
                             event.getWhoClicked().closeInventory();
@@ -72,7 +75,8 @@ public class InventoryListener implements Listener {
                                 && event.getCurrentItem().hasItemMeta()
                                 && event.getCurrentItem().getItemMeta().hasDisplayName()
                                 && event.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("§6Save and quit")) {
-                            if (CountryManager.getPlayerCountry((Player) event.getWhoClicked()) != null) {
+                            Country country = CountryManager.getPlayerCountry((Player) event.getWhoClicked());
+                            if (country != null) {
                                 Rank rank = CountryManager.getPlayerCountry((Player) event.getWhoClicked()).getRank(event.getView().getTitle().split("'")[0].substring(2));
                                 for (ItemStack is : event.getClickedInventory().getContents()) {
                                     if (is != null && is.getType().name().contains("STAINED_GLASS_PANE") && is.hasItemMeta() && is.getItemMeta().hasDisplayName()) {
@@ -85,7 +89,8 @@ public class InventoryListener implements Listener {
                                         }
                                     }
                                 }
-                                CountryManager.saveCountry(CountryManager.getPlayerCountry((Player) event.getWhoClicked()));
+                                CountryManager.saveCountry(country);
+                                Main.getInstance().log(event.getWhoClicked().getName() + " edited " + country.getName() + "'s permissions");
                                 event.getWhoClicked().sendMessage(Main.getMessages().getMessage("permissionsedited", "%rank%", rank.getName()));
                             }
                             event.getWhoClicked().closeInventory();

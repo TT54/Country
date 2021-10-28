@@ -51,5 +51,6 @@ public class Messages {
         if (!messagesFile.exists()) {
             javaPlugin.saveResource("message.yml", false);
         }
+        FileManager.updateYmlFile("message", "message");
     }
 }

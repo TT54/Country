@@ -47,7 +47,7 @@ public class CountryManager {
             countries.set(country.getUuid().toString() + ".members." + offlinePlayer.getUniqueId().toString(), country.getMembers().get(offlinePlayer).getName());
         }
         countries.set(country.getUuid().toString() + ".level", country.getLevel());
-        countries.set(country.getUuid().toString() + ".maxclaims", country.getMaxClaims());
+        countries.set(country.getUuid().toString() + ".maxclaims", calculMaxClaims(country));
         countries.set(country.getUuid().toString() + ".isopened", country.isOpened());
         for (int i = 0; i < country.getChunksClaimed().size(); i++) {
             countries.set(country.getUuid().toString() + ".chunks." + i + ".x", country.getChunksClaimed().get(i).getX());
@@ -62,6 +62,7 @@ public class CountryManager {
         }
         saveCountries();
         player.sendMessage(Main.getMessages().getMessage("countrycreated", "%country%", getCountryName(player)));
+        Main.getInstance().log(player.getName() + " create a country named " + country.getName());
     }
 
     private static void saveCountries() {
@@ -87,13 +88,14 @@ public class CountryManager {
                 offlinePlayer.getPlayer().sendMessage(Main.getMessages().getMessage("newleader", "%player%", newLeader.getName()));
             }
         }
+        Main.getInstance().log(newLeader.getName() + " is the new leader of " + country.getName());
     }
 
     public static boolean existCountry(UUID uuid) {
         return countriesMap.containsKey(uuid.toString());
     }
 
-    public static void reloadCountries() {
+    private static void reloadCountries() {
         countries = FileManager.getYmlFile("countries");
         countriesMap.clear();
         playersCountry.clear();
@@ -137,6 +139,7 @@ public class CountryManager {
             }
 
             int level = section.getInt("level");
+            int points = section.getInt("points");
             int maxClaims = section.getInt("maxclaims");
             boolean opened = section.getBoolean("isopened");
 
@@ -149,7 +152,8 @@ public class CountryManager {
                 }
             }*/
 
-            Country country = new Country(UUID.fromString(fuuid), name, members, leader, level, maxClaims, chunks, new ArrayList<>(ranks.values()), opened);
+            Country country = new Country(UUID.fromString(fuuid), name, members, leader, level, points, maxClaims, chunks, new ArrayList<>(ranks.values()), opened);
+            calculMaxClaims(country);
             countriesMap.put(fuuid, country);
             for (OfflinePlayer offlinePlayer : country.getMembers().keySet()) {
                 playersCountry.put(offlinePlayer.getUniqueId().toString(), country);
@@ -176,6 +180,9 @@ public class CountryManager {
 
     public static void removeCountry(UUID uuid) {
         Country country = getCountry(uuid);
+        if (country == null)
+            return;
+        RelationManager.disbandRelations(country);
         List<Location> chunks = country.getChunksClaimed().stream().map(chunk -> chunk.getBlock(1, 1, 1).getLocation()).collect(Collectors.toList());
         for (Location location : chunks) {
             ClaimManager.unclaimChunk(country, location);
@@ -188,6 +195,8 @@ public class CountryManager {
         countriesMap.remove(uuid.toString());
         countries.set(uuid.toString(), null);
         saveCountries();
+
+        Main.getInstance().log(country.getName() + " was disband");
     }
 
     public static Country getCountry(UUID uuid) {
@@ -214,26 +223,29 @@ public class CountryManager {
         player.sendMessage(Main.getMessages().getMessage("countryremoved", "%country%", name));
     }
 
-    public static void joinCountry(Player player, UUID factionUUID) {
-        if (!hasCountry(player) && getCountry(factionUUID) != null) {
-            if (!getCountry(factionUUID).isOpened() && !InviteManager.isInvited(player, factionUUID)) {
+    public static void joinCountry(Player player, UUID countryUUID) {
+        if (!hasCountry(player) && getCountry(countryUUID) != null) {
+            if (!getCountry(countryUUID).isOpened() && !InviteManager.isInvited(player, countryUUID)) {
                 return;
             }
-            countriesMap.get(factionUUID.toString()).getMembers().put(Bukkit.getOfflinePlayer(player.getUniqueId()), Country.getMinRank(countriesMap.get(factionUUID.toString()).getRanks()));
-            ConfigurationSection memberSection = countries.getConfigurationSection(factionUUID.toString() + ".members");
-            Map<OfflinePlayer, Rank> members = countriesMap.get(factionUUID.toString()).getMembers();
+            countriesMap.get(countryUUID.toString()).addMember(Bukkit.getOfflinePlayer(player.getUniqueId()));
+            ConfigurationSection memberSection = countries.getConfigurationSection(countryUUID.toString() + ".members");
+            Map<OfflinePlayer, Rank> members = countriesMap.get(countryUUID.toString()).getMembers();
             for (OfflinePlayer offlinePlayer : members.keySet()) {
-                countries.set(factionUUID.toString() + ".members." + offlinePlayer.getUniqueId().toString(), members.get(offlinePlayer).getName());
+                countries.set(countryUUID.toString() + ".members." + offlinePlayer.getUniqueId().toString(), members.get(offlinePlayer).getName());
             }
-            playersCountry.put(player.getUniqueId().toString(), countriesMap.get(factionUUID.toString()));
+            playersCountry.put(player.getUniqueId().toString(), countriesMap.get(countryUUID.toString()));
             saveCountries();
             InviteManager.clearInvites(player);
-            player.sendMessage(Main.getMessages().getMessage("countryjoined", "%country%", getCountry(factionUUID).getName()));
-            for (OfflinePlayer offlinePlayer : getCountry(factionUUID).getMembers().keySet()) {
+            player.sendMessage(Main.getMessages().getMessage("countryjoined", "%country%", getCountry(countryUUID).getName()));
+            for (OfflinePlayer offlinePlayer : getCountry(countryUUID).getMembers().keySet()) {
                 if (offlinePlayer.isOnline()) {
                     offlinePlayer.getPlayer().sendMessage(Main.getMessages().getMessage("playerjoincountry", "%player%", player.getName()));
                 }
             }
+            calculMaxClaims(getCountry(countryUUID));
+
+            Main.getInstance().log(player.getName() + " joined the country " + getCountry(countryUUID));
         }
     }
 
@@ -259,7 +271,31 @@ public class CountryManager {
                     offlinePlayer.getPlayer().sendMessage(Main.getMessages().getMessage("playerleave", "%player%", player.getName()));
                 }
             }
+            calculMaxClaims(country);
+
+            Main.getInstance().log(player.getName() + " left the country " + country.getName());
         }
+    }
+
+    public static int calculMaxClaims(Country country) {
+        country.setMaxClaims(country.getMembers().size() * (country.getLevel() + 5) + country.getLevel() * 5);
+        return country.getMaxClaims();
+    }
+
+    public static void calculLevel(Country country) {
+        int pointsLeft = country.getPoints();
+        int level = 0;
+        while (pointsLeft >= getPointsToNextLevel(level)) {
+            pointsLeft -= getPointsToNextLevel(level);
+            level++;
+        }
+        if (level != country.getLevel())
+            country.setLevel(level);
+        country.setLevelPoints(pointsLeft);
+    }
+
+    public static int getPointsToNextLevel(int level) {
+        return (int) ((Math.pow(level * 1.5, 2) + 7) * 15);
     }
 
     public static Rank getRank(OfflinePlayer player) {
@@ -282,6 +318,8 @@ public class CountryManager {
                 if (offlinePlayer.isOnline() && offlinePlayer.getPlayer() != null)
                     offlinePlayer.getPlayer().sendMessage(Main.getMessages().getMessage("countryopened", "%player%", player.getName()));
             }
+
+            Main.getInstance().log(player.getName() + " opened the country " + country.getName());
         }
         if (player.isOnline()) {
             player.getPlayer().sendMessage(Main.getMessages().getMessage(message));
@@ -300,6 +338,8 @@ public class CountryManager {
                 if (offlinePlayer.isOnline() && offlinePlayer.getPlayer() != null)
                     offlinePlayer.getPlayer().sendMessage(Main.getMessages().getMessage("countryclosed", "%player%", player.getName()));
             }
+
+            Main.getInstance().log(player.getName() + " closed the country " + country.getName());
         }
         if (player.isOnline()) {
             player.getPlayer().sendMessage(Main.getMessages().getMessage(message));
@@ -310,6 +350,7 @@ public class CountryManager {
         if (!country.hasRank(rank.getName())) {
             country.addRank(rank);
             saveCountry(country);
+            Main.getInstance().log("The rank " + rank.getName() + " was created in " + country.getName());
             return true;
         }
         return false;
@@ -319,6 +360,7 @@ public class CountryManager {
         if (country.hasRank(name)) {
             country.removeRank(name);
             saveCountry(country);
+            Main.getInstance().log("The rank " + name + " was deleted in " + country.getName());
             return true;
         }
         return false;
@@ -331,6 +373,7 @@ public class CountryManager {
             if (actualRank != null && rank != null && !actualRank.equals(rank)) {
                 country.setRank(player, rank);
                 saveCountry(country);
+                Main.getInstance().log("The new rank of " + player.getName() + " is now " + rank.getName());
             }
             return true;
         }
@@ -343,6 +386,7 @@ public class CountryManager {
             if (country.hasRank(rankToEdit.getName())) {
                 country.setRankPower(rankToEdit.getName(), power);
                 saveCountry(country);
+                Main.getInstance().log("The rank " + rankToEdit.getName() + " in " + country.getName() + " has now a power of " + power);
                 return true;
             }
         }
@@ -355,6 +399,7 @@ public class CountryManager {
             if (country.hasRank(rankToEdit.getName())) {
                 country.setRankPrefix(rankToEdit.getName(), prefix);
                 saveCountry(country);
+                Main.getInstance().log("The rank " + rankToEdit.getName() + " in " + country.getName() + " has now the prefix : " + prefix);
                 return true;
             }
         }
@@ -375,7 +420,8 @@ public class CountryManager {
                 countries.set(uuid.toString() + ".members." + offlinePlayer.getUniqueId().toString(), country.getMembers().get(offlinePlayer).getName());
             }
             countries.set(uuid.toString() + ".level", country.getLevel());
-            countries.set(uuid.toString() + ".maxclaims", country.getMaxClaims());
+            countries.set(uuid.toString() + ".points", country.getPoints());
+            countries.set(uuid.toString() + ".maxclaims", calculMaxClaims(country));
             countries.set(uuid.toString() + ".isopened", country.isOpened());
             /*for (int i = 0; i < country.getChunksClaimed().size(); i++) {
                 countries.set(uuid.toString() + ".chunks." + i + ".x", country.getChunksClaimed().get(i).getX());
@@ -412,6 +458,8 @@ public class CountryManager {
                     offlinePlayer.getPlayer().sendMessage(Main.getMessages().getMessage("playerkick", "%player%", player.getName(), "%kicker%", kicker.getName()));
                 }
             }
+
+            Main.getInstance().log(player.getName() + " was kicked from the country " + country.getName());
         }
     }
 }

@@ -80,6 +80,7 @@ public class InviteManager {
                     offlinePlayer.getPlayer().sendMessage(Main.getMessages().getMessage("playerinvited", "%player%", target.getName(), "%inviter%", sender.getName()));
                 }
             }
+            Main.getInstance().log(target.getName() + " was invited to join " + sender + "'s country");
         }
     }
 
@@ -121,6 +122,7 @@ public class InviteManager {
                 offlinePlayer.getPlayer().sendMessage(Main.getMessages().getMessage("playeruninvited", "%player%", player.getName()));
             }
         }
+        Main.getInstance().log(player.getName() + " was uninvited to join " + country.getName());
     }
 
 }
