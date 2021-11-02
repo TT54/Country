@@ -33,7 +33,7 @@ public class CmdUninvite extends SubCommand {
             return false;
         }
         if (player.getName().equalsIgnoreCase(args[0])) {
-            player.sendMessage(Main.getMessages().getMessage("uninviteyourself"));
+            player.sendMessage(Main.getMessages().getMessage("executeyourself"));
             return false;
         }
         if (!CountryManager.hasCountry(player)) {

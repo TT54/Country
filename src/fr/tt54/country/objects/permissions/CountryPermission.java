@@ -14,6 +14,8 @@ public enum CountryPermission {
     EDIT_RANK("Allow to modify a faction rank."),
     EDIT_PERMISSIONS("Allow to modify rank permissions."),
     MANAGE_RELATIONS("Allow to modify your relations with other countries."),
+    BANK_DEPOSIT("Allow to add money to your country bank"),
+    BANK_WITHDRAW("Allow to remove money from your country bank"),
     CLAIM("Allow to claim and unclaim chunks."),
     ACCESS_CLAIM("Allow to access players in claimed chunks."),
     BUILD("Allow to build in faction's claims."),

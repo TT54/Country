@@ -50,13 +50,22 @@ public class CmdForfeit extends SubCommand {
         Country target = CountryManager.getCountry(args[0]);
 
         if (target == country) {
-            player.sendMessage(Main.getMessages().getMessage("relationsyourself"));
+            player.sendMessage(Main.getMessages().getMessage("executeyourself"));
             return false;
         }
 
         if (!WarManager.areInWar(country, target)) {
             player.sendMessage(Main.getMessages().getMessage("notinwar", "%country%", target.getName()));
             return false;
+        }
+
+        if (Main.isEconomySetup()) {
+            double forfeitCost = Main.getInstance().getForfeitCost();
+            if (country.getMoney() < forfeitCost) {
+                sender.sendMessage(Main.getMessages().getMessage("notenoughtoforfeit", "%cost%", Main.getEconomy().format(forfeitCost), "%country%", args[0]));
+                return false;
+            }
+            country.removeMoney(forfeitCost);
         }
 
         WarManager.onWarWin(target, WarManager.getActualWarBetween(country, target));

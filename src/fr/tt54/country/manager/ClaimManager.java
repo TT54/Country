@@ -148,8 +148,9 @@ public class ClaimManager {
         if (!CountryManager.hasCountry(player))
             return false;
         Country country = CountryManager.getPlayerCountry(player);
-        if (claim.getOwner() != country)
-            return false;
+        if (claim.getOwner() != country && country != null) {
+            return claim.getOwner().hasRelationPermission(claim.getOwner().getRelationWith(country.getUuid()), claimPermission);
+        }
         return CountryManager.getRank(player).hasPermission(countryPermission);
     }
 

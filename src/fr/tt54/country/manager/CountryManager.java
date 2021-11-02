@@ -291,6 +291,7 @@ public class CountryManager {
         }
         if (level != country.getLevel())
             country.setLevel(level);
+        country.setMaxMoney(200000 * (level + 1));
         country.setLevelPoints(pointsLeft);
     }
 

@@ -15,3 +15,8 @@ claimmessage: true
 
 #If true, each action in the plugin will be logged in the console
 enablelogging: true
+
+#If true, Vault is required to enable economy system
+enable_economy: true
+
+forfeit_cost: 30000

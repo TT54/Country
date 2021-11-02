@@ -1,5 +1,6 @@
 package fr.tt54.country.cmd;
 
+import fr.tt54.country.Main;
 import fr.tt54.country.cmd.subcommand.*;
 import org.bukkit.command.CommandSender;
 
@@ -51,6 +52,7 @@ public abstract class SubCommand {
         registerCommand(new CmdKick());
         registerCommand(new CmdLeader());
         registerCommand(new CmdPermission());
+        registerCommand(new CmdRelationPermission());
         registerCommand(new CmdAlly());
         registerCommand(new CmdEntente());
         registerCommand(new CmdEnemy());
@@ -58,6 +60,11 @@ public abstract class SubCommand {
         registerCommand(new CmdWar());
         registerCommand(new CmdForfeit());
         registerCommand(new CmdList());
+        registerCommand(new CmdWarInfo());
+
+        if (Main.isEconomySetup()) {
+            registerCommand(new CmdBank());
+        }
     }
 
     public static void registerCommand(SubCommand subCommand) {

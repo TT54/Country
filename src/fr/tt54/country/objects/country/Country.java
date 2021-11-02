@@ -2,6 +2,7 @@ package fr.tt54.country.objects.country;
 
 import fr.tt54.country.manager.CountryManager;
 import fr.tt54.country.manager.RelationManager;
+import fr.tt54.country.objects.permissions.ClaimPermission;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.OfflinePlayer;
@@ -22,10 +23,13 @@ public class Country {
     private List<Rank> ranks;
     private boolean opened;
 
+    private double maxMoney;
+    private double money;
     private int levelPoints;
 
     private Map<UUID, Relations> relations = new HashMap<>();
     private Map<UUID, Relations> relationsRequests = new HashMap<>();
+    private Map<Relations, List<ClaimPermission>> relationsPermissions = new HashMap<>();
 
 
     public Country(UUID uuid, String name, OfflinePlayer leader, List<Rank> ranks) {
@@ -35,6 +39,8 @@ public class Country {
         this.ranks = ranks;
         this.members.put(leader.getUniqueId(), getMaxRank(ranks));
         this.opened = false;
+
+        this.maxMoney = 200000;
     }
 
     public Country(UUID uuid, String name, Map<OfflinePlayer, Rank> members, OfflinePlayer leader, int level, int points, int maxClaims, List<Chunk> chunksClaimed, List<Rank> ranks, boolean opened) {
@@ -52,6 +58,7 @@ public class Country {
         this.opened = opened;
 
         CountryManager.calculLevel(this);
+        //this.maxMoney = 200000 * this.getLevel();
     }
 
     public int getLevelPoints() {
@@ -315,5 +322,55 @@ public class Country {
 
     public Map<UUID, Relations> getRelationsRequests() {
         return relationsRequests;
+    }
+
+    public Map<Relations, List<ClaimPermission>> getRelationsPermissions() {
+        return relationsPermissions;
+    }
+
+    public List<ClaimPermission> getRelationPermissions(Relations relation) {
+        return relationsPermissions.getOrDefault(relation, new ArrayList<>());
+    }
+
+    public void setRelationPermissions(Relations relation, List<ClaimPermission> permissions) {
+        this.relationsPermissions.put(relation, permissions);
+    }
+
+    public boolean hasRelationPermission(Relations relation, ClaimPermission permission) {
+        return this.getRelationPermissions(relation).contains(permission);
+    }
+
+    public void addRelationPermission(Relations relation, ClaimPermission permission) {
+        List<ClaimPermission> permissions = this.getRelationPermissions(relation);
+        permissions.add(permission);
+        this.setRelationPermissions(relation, permissions);
+    }
+
+    public void removeRelationPermission(Relations relation, ClaimPermission permission) {
+        this.getRelationPermissions(relation).remove(permission);
+    }
+
+    public double getMaxMoney() {
+        return maxMoney;
+    }
+
+    public void setMaxMoney(double maxMoney) {
+        this.maxMoney = maxMoney;
+    }
+
+    public double getMoney() {
+        return money;
+    }
+
+    public void setMoney(double money) {
+        this.money = money;
+    }
+
+    public void addMoney(double amount) {
+        this.money += amount;
+    }
+
+    public void removeMoney(double amount) {
+        this.money -= amount;
     }
 }

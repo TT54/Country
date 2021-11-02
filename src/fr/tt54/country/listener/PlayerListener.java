@@ -55,10 +55,12 @@ public class PlayerListener implements Listener {
 
     private String playerSendMessage(Player player, List<Player> players, String format, String message) {
         String send = format.replace("&", "§").replace("%country_name%", CountryManager.getCountryName(player)).replace("%player%", player.getDisplayName()).replace("%message%", message);
+        Country senderCountry = CountryManager.getPlayerCountry(player);
         for (Player player1 : players) {
             String color = "";
-            if (CountryManager.getPlayerCountry(player1) != null && CountryManager.getPlayerCountry(player) != null) {
-                color = (CountryManager.getPlayerCountry(player1).equals(CountryManager.getPlayerCountry(player))) ? "§2" : "";
+            Country receiverCountry = CountryManager.getPlayerCountry(player1);
+            if (senderCountry != null && receiverCountry != null) {
+                color = (receiverCountry.equals(senderCountry)) ? "§2" : receiverCountry.getRelationWith(senderCountry.getUuid()).getColor();
             }
             player1.sendMessage(send.replace("%relation_color%", color));
         }

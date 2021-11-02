@@ -31,6 +31,10 @@ public enum Relations {
         this.color = color;
     }
 
+    public static boolean exist(String arg) {
+        return relationsMap.containsKey(arg.toUpperCase());
+    }
+
     public String getDisplay() {
         return display;
     }

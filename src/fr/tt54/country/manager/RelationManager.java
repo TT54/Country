@@ -3,13 +3,16 @@ package fr.tt54.country.manager;
 import fr.tt54.country.Main;
 import fr.tt54.country.objects.country.Country;
 import fr.tt54.country.objects.country.Relations;
+import fr.tt54.country.objects.permissions.ClaimPermission;
 import fr.tt54.country.utils.FileManager;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class RelationManager {
 
@@ -39,6 +42,15 @@ public class RelationManager {
                 if (relationsSection != null) {
                     for (String relationCountry : relationsSection.getKeys(false)) {
                         country.setRelationWith(UUID.fromString(relationCountry), Relations.getRelation(relationsSection.getString(relationCountry)));
+                    }
+                }
+
+                ConfigurationSection permissionSection = relations.getConfigurationSection(cUUID + ".permissions");
+                if (permissionSection != null) {
+                    for (String relation : permissionSection.getKeys(false)) {
+                        List<String> perms = permissionSection.getStringList(relation);
+                        List<ClaimPermission> relationPermissions = perms.stream().map(ClaimPermission::getPermission).collect(Collectors.toList());
+                        country.setRelationPermissions(Relations.getRelation(relation), relationPermissions);
                     }
                 }
             }
@@ -231,6 +243,9 @@ public class RelationManager {
         }
         for (UUID uuid : country.getRelationsRequests().keySet()) {
             relations.set(country.getUuid().toString() + ".requests." + uuid.toString(), country.getRelationRequestsWith(uuid).name());
+        }
+        for (Relations relation : country.getRelationsPermissions().keySet()) {
+            relations.set(country.getUuid().toString() + ".permissions." + relation.name(), country.getRelationPermissions(relation).stream().map(ClaimPermission::name).collect(Collectors.toList()));
         }
         saveRelations();
     }

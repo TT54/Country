@@ -10,8 +10,11 @@ import fr.tt54.country.manager.*;
 import fr.tt54.country.objects.country.Rank;
 import fr.tt54.country.utils.Messages;
 import fr.tt54.country.utils.Permission;
+import fr.tt54.country.utils.materials.MaterialUtils;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Logger;
@@ -25,9 +28,12 @@ public class Main extends JavaPlugin {
     private static final String CONFIG_VERSION = "1.0";
 
     private static Main instance;
+    private static Economy econ = null;
+    private static boolean economyEnable;
 
     private Logger log;
     private boolean loggingEnable;
+    private double forfeitCost;
     private String noCountryName = "None";
 
     @Override
@@ -64,9 +70,20 @@ public class Main extends JavaPlugin {
         ClaimManager.enable();
         RelationManager.enable();
         WarManager.enable();
+        MaterialUtils.registerMaterials();
 
         this.noCountryName = this.getConfig().getString("nocountryname");
         this.loggingEnable = this.getConfig().getBoolean("enablelogging");
+        economyEnable = this.getConfig().getBoolean("enable_economy");
+
+        if (economyEnable) {
+            if (!setupEconomy()) {
+                log.warning("Vault is not found ! The economy system will be disabled !");
+            } else {
+                EconomyManager.enable();
+                forfeitCost = this.getConfig().getDouble("forfeit_cost");
+            }
+        }
 
         if (!this.getConfig().getString("version").equalsIgnoreCase(CONFIG_VERSION)) {
             log.warning(MESSAGES.getMessage("badconfigversion", "%configversion%", this.getConfig().getString("configversion"), "%newversion%", CONFIG_VERSION));
@@ -104,6 +121,27 @@ public class Main extends JavaPlugin {
         return this.log;
     }
 
+    private boolean setupEconomy() {
+        if (getServer().getPluginManager().getPlugin("Vault") == null) {
+            return false;
+        }
+        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) {
+            return false;
+        }
+        econ = rsp.getProvider();
+        economyEnable = econ != null;
+        return econ != null;
+    }
+
+    public static boolean isEconomySetup() {
+        return economyEnable;
+    }
+
+    public double getForfeitCost() {
+        return forfeitCost;
+    }
+
     public void log(String message) {
         if (this.loggingEnable)
             this.getLog().info(message);
@@ -112,5 +150,9 @@ public class Main extends JavaPlugin {
     public void logAlert(String message) {
         if (this.loggingEnable)
             this.getLog().warning(message);
+    }
+
+    public static Economy getEconomy() {
+        return econ;
     }
 }
