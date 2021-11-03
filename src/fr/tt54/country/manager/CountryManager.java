@@ -442,15 +442,16 @@ public class CountryManager {
     public static void kickCountry(OfflinePlayer player, Player kicker) {
         if (hasCountry(player)) {
             Country country = getPlayerCountry(player);
-            countriesMap.get(country.getUuid().toString()).getMembers().remove(Bukkit.getOfflinePlayer(player.getUniqueId()));
+            /*countriesMap.get(country.getUuid().toString()).getMembers().remove(Bukkit.getOfflinePlayer(player.getUniqueId()));
             ConfigurationSection memberSection = countries.getConfigurationSection(country.getUuid().toString() + ".members");
             Map<OfflinePlayer, Rank> members = countriesMap.get(country.getUuid().toString()).getMembers();
             countries.set(country.getUuid().toString() + ".members", null);
             for (OfflinePlayer offlinePlayer : members.keySet()) {
                 countries.set(country.getUuid().toString() + ".members." + offlinePlayer.getUniqueId().toString(), members.get(offlinePlayer).getName());
-            }
+            }*/
             playersCountry.remove(player.getUniqueId().toString());
-            saveCountries();
+            country.removeMember(player);
+            saveCountry(country);
             if (player.isOnline()) {
                 player.getPlayer().sendMessage(Main.getMessages().getMessage("kicked"));
             }

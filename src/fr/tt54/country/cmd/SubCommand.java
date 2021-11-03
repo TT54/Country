@@ -61,6 +61,7 @@ public abstract class SubCommand {
         registerCommand(new CmdForfeit());
         registerCommand(new CmdList());
         registerCommand(new CmdWarInfo());
+        registerCommand(new CmdPlayer());
 
         if (Main.isEconomySetup()) {
             registerCommand(new CmdBank());

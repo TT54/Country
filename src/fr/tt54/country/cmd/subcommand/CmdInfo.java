@@ -53,7 +53,7 @@ public class CmdInfo extends SubCommand {
         return null;
     }
 
-    private static void sendInfosMessage(Country country, CommandSender sender) {
+    protected static void sendInfosMessage(Country country, CommandSender sender) {
         sender.sendMessage("");
         sender.sendMessage("§9---- [INFOS] ----");
         sender.sendMessage("§3Name: §b" + country.getName());

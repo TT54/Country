@@ -118,11 +118,11 @@ public class Country {
 
     public void removeMember(OfflinePlayer player) {
         if (this.hasMember(player))
-            this.members.remove(player);
+            this.members.remove(player.getUniqueId());
     }
 
     public boolean hasMember(OfflinePlayer player) {
-        return this.members.containsKey(player);
+        return this.members.containsKey(player.getUniqueId());
     }
 
     public OfflinePlayer getLeader() {

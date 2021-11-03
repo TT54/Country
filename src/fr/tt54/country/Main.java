@@ -3,7 +3,6 @@ package fr.tt54.country;
 import fr.tt54.country.cmd.CountryCommand;
 import fr.tt54.country.cmd.SubCommand;
 import fr.tt54.country.listener.ClaimListener;
-import fr.tt54.country.listener.ConnectionListener;
 import fr.tt54.country.listener.InventoryListener;
 import fr.tt54.country.listener.PlayerListener;
 import fr.tt54.country.manager.*;
@@ -47,7 +46,6 @@ public class Main extends JavaPlugin {
         this.getCommand("country").setTabCompleter(new CountryCommand());
 
         this.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
-        this.getServer().getPluginManager().registerEvents(new ConnectionListener(), this);
         this.getServer().getPluginManager().registerEvents(new ClaimListener(), this);
         this.getServer().getPluginManager().registerEvents(new InventoryListener(), this);
         SubCommand.registerCommands();
@@ -86,18 +84,18 @@ public class Main extends JavaPlugin {
         }
 
         if (!this.getConfig().getString("version").equalsIgnoreCase(CONFIG_VERSION)) {
-            log.warning(MESSAGES.getMessage("badconfigversion", "%configversion%", this.getConfig().getString("configversion"), "%newversion%", CONFIG_VERSION));
+            log.warning(MESSAGES.getMessage("badconfigversion", "%configversion%", this.getConfig().getString("version"), "%newversion%", CONFIG_VERSION));
             for (Player player : Bukkit.getOnlinePlayers()) {
-                if (Permission.hasPermission(player, "topluck.reload")) {
+                if (Permission.hasPermission(player, "country.reload")) {
                     player.sendMessage("");
-                    player.sendMessage(MESSAGES.getMessage("badconfigversion", "%configversion%", this.getConfig().getString("configversion"), "%newversion%", CONFIG_VERSION));
+                    player.sendMessage(MESSAGES.getMessage("badconfigversion", "%configversion%", this.getConfig().getString("version"), "%newversion%", CONFIG_VERSION));
                 }
             }
         }
         if (!MESSAGES.getMessage("version").equalsIgnoreCase(MESSAGES_VERSION)) {
             log.warning(MESSAGES.getMessage("badmessagesversion", "%messagesversion%", MESSAGES.getMessage("version"), "%newversion%", MESSAGES_VERSION));
             for (Player player : Bukkit.getOnlinePlayers()) {
-                if (Permission.hasPermission(player, "topluck.reload")) {
+                if (Permission.hasPermission(player, "country.reload")) {
                     player.sendMessage("");
                     player.sendMessage(MESSAGES.getMessage("badmessagesversion", "%messagesversion%", MESSAGES.getMessage("version"), "%newversion%", MESSAGES_VERSION));
                 }

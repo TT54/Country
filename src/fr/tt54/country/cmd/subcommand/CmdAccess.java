@@ -5,6 +5,7 @@ import fr.tt54.country.cmd.SubCommand;
 import fr.tt54.country.manager.ClaimManager;
 import fr.tt54.country.manager.CountryManager;
 import fr.tt54.country.objects.country.Claim;
+import fr.tt54.country.objects.country.Country;
 import fr.tt54.country.objects.permissions.ClaimPermission;
 import fr.tt54.country.objects.permissions.CountryPermission;
 import fr.tt54.country.utils.Permission;
@@ -35,6 +36,7 @@ public class CmdAccess extends SubCommand {
             player.sendMessage(Main.getMessages().getMessage("nocountry"));
             return false;
         }
+        Country country = CountryManager.getPlayerCountry(player);
         if (!Permission.hasCountryPermission(player, CountryPermission.ACCESS_CLAIM)) {
             player.sendMessage(Main.getMessages().getMessage("notcountrypermission"));
             return false;
@@ -55,6 +57,10 @@ public class CmdAccess extends SubCommand {
             return true;
         } else {
             if (!ClaimManager.isInClaimedChunk(player.getLocation())) {
+                player.sendMessage(Main.getMessages().getMessage("mustbeinclaim"));
+                return false;
+            }
+            if (claim.getOwner() != country) {
                 player.sendMessage(Main.getMessages().getMessage("mustbeinclaim"));
                 return false;
             }
