@@ -18,7 +18,7 @@ import java.util.UUID;
 public class InviteManager {
 
     private static FileConfiguration invitesFile;
-    private static List<Invite> invites = new ArrayList<>();
+    private static final List<Invite> invites = new ArrayList<>();
 
     public static void enable() {
         reloadInvites();

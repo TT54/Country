@@ -11,7 +11,7 @@ public enum Relations {
     ENTENTE("Entente", "§e"),
     ALLY("Ally", "§d");
 
-    private static Map<String, Relations> relationsMap = new HashMap<>();
+    private static final Map<String, Relations> relationsMap = new HashMap<>();
 
     static {
         for (Relations rel : Relations.values()) {

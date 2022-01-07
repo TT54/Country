@@ -93,9 +93,7 @@ public class WarManager {
     }
 
     public static List<War> getWarsBetween(Country country1, Country country2) {
-        return getWars(country1.getUuid()).stream().filter(war -> {
-            return war.getCountry2() == country2 || war.getCountry1() == country2;
-        }).collect(Collectors.toList());
+        return getWars(country1.getUuid()).stream().filter(war -> war.getCountry2() == country2 || war.getCountry1() == country2).collect(Collectors.toList());
     }
 
     public static War getActualWarBetween(Country country1, Country country2) {

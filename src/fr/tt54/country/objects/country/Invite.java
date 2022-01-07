@@ -7,9 +7,9 @@ import java.util.UUID;
 
 public class Invite {
 
-    private UUID playerUUID;
-    private UUID senderUUID;
-    private Country country;
+    private final UUID playerUUID;
+    private final UUID senderUUID;
+    private final Country country;
 
     public Invite(UUID playerUUID, UUID senderUUID, Country country) {
         this.playerUUID = playerUUID;

@@ -14,7 +14,7 @@ public class Country {
 
     private UUID uuid;
     private String name;
-    private Map<UUID, Rank> members = new HashMap<>();
+    private final Map<UUID, Rank> members = new HashMap<>();
     private UUID leader;
     private int level;
     private int points;
@@ -27,9 +27,9 @@ public class Country {
     private double money;
     private int levelPoints;
 
-    private Map<UUID, Relations> relations = new HashMap<>();
-    private Map<UUID, Relations> relationsRequests = new HashMap<>();
-    private Map<Relations, List<ClaimPermission>> relationsPermissions = new HashMap<>();
+    private final Map<UUID, Relations> relations = new HashMap<>();
+    private final Map<UUID, Relations> relationsRequests = new HashMap<>();
+    private final Map<Relations, List<ClaimPermission>> relationsPermissions = new HashMap<>();
 
 
     public Country(UUID uuid, String name, OfflinePlayer leader, List<Rank> ranks) {
@@ -368,6 +368,10 @@ public class Country {
 
     public void addMoney(double amount) {
         this.money += amount;
+    }
+
+    public boolean hasMoney(double amount) {
+        return this.money >= amount;
     }
 
     public void removeMoney(double amount) {

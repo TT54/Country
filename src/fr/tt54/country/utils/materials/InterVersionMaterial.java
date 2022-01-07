@@ -2,11 +2,11 @@ package fr.tt54.country.utils.materials;
 
 public class InterVersionMaterial {
 
-    private int startVersion;
-    private int endVersion;
-    private String name;
-    private MaterialCategory materialCategory;
-    private String materialName;
+    private final int startVersion;
+    private final int endVersion;
+    private final String name;
+    private final MaterialCategory materialCategory;
+    private final String materialName;
 
     public InterVersionMaterial(String name, MaterialCategory materialCategory, String materialName, int startVersion, int endVersion) {
         this.startVersion = startVersion;

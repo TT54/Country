@@ -11,7 +11,7 @@ public class Rank {
     private String name;
     private String prefix;
     private int power;
-    private List<CountryPermission> countryPermissions = new ArrayList<>();
+    private final List<CountryPermission> countryPermissions = new ArrayList<>();
     public static List<Rank> defaultRanks = new ArrayList<>();
 
     public Rank(String name, String prefix, int power) {

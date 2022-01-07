@@ -19,6 +19,7 @@ nocountry: "&cYou must have a country to execute this command !"
 alreadyincountry: "&cYou are already in a country (%country%) !"
 playerhascountry: "&cThis player is already in a country"
 playernotinyourcountry: "&cThe targeted player is not in your country"
+#New
 playernotinacountry: "&cThe targeted player is not in a country"
 countryuuidnotexist: "&cThe country with the UUID %countryuuid% does not exist"
 countrynotexist: "&cThe country %country% does not exist"
@@ -118,10 +119,12 @@ warally: "&cYou started a &2war&c with %country% because you are in &dally&c wit
 relationsyourself: "&cYou can't edit your relations with yourself !"
 warwon: "&eThe country &d%winner%&e won the &cwar&e between &6%country1% and %country2% !"
 useforfeit: "&cTo stop a war, you can use /country forfeit"
+#new
 notenoughtoforfeit: "&cYou don't have enough money (%cost%) to forfeit the war against %country% !"
 
 donthavemoney: "&cYou don't have enough money (%money%) !"
 moneydeposit: "&aYou deposed %money% in you country bank !"
 countrydoesnthavemoney: "&cYour country doesn't have enough money (%money%) !"
 moneywithdraw: "&aYou removed %money% in you country bank !"
+#new
 countrybankfull: "&cThe bank of your country is full and can't have more money !"

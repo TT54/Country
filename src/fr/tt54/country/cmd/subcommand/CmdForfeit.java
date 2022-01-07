@@ -61,7 +61,7 @@ public class CmdForfeit extends SubCommand {
 
         if (Main.isEconomySetup()) {
             double forfeitCost = Main.getInstance().getForfeitCost();
-            if (country.getMoney() < forfeitCost) {
+            if (!country.hasMoney(forfeitCost)) {
                 sender.sendMessage(Main.getMessages().getMessage("notenoughtoforfeit", "%cost%", Main.getEconomy().format(forfeitCost), "%country%", args[0]));
                 return false;
             }
