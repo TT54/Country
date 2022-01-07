@@ -84,7 +84,7 @@ public class CmdBank extends SubCommand {
 
                 try {
                     double amount = Math.abs(Double.parseDouble(args[1]));
-                    if (country.getMoney() >= amount) {
+                    if (country.hasMoney(amount)) {
                         EconomyManager.playerWithdraw(player, country, amount);
                         sender.sendMessage(Main.getMessages().getMessage("moneywithdraw", "%money%", Main.getEconomy().format(amount)));
                         return true;

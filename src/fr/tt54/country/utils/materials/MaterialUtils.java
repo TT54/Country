@@ -11,8 +11,8 @@ import java.util.stream.Collectors;
 
 public class MaterialUtils {
 
-    private static Map<MaterialCategory, List<InterVersionMaterial>> materials = new HashMap<>();
-    private static Map<String, List<InterVersionMaterial>> materialsWithName = new HashMap<>();
+    private static final Map<MaterialCategory, List<InterVersionMaterial>> materials = new HashMap<>();
+    private static final Map<String, List<InterVersionMaterial>> materialsWithName = new HashMap<>();
 
     public static void registerMaterials() {
         registerMaterial(new InterVersionMaterial("BUTTON", MaterialCategory.BUTTON, "WOOD_BUTTON", -1, 12));

@@ -18,7 +18,7 @@ import java.util.List;
 
 public class PlayerListener implements Listener {
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onChat(AsyncPlayerChatEvent event) {
         if (Main.getInstance().getConfig().getBoolean("enablechat")) {
             String format = Main.getInstance().getConfig().getString("chatformat");

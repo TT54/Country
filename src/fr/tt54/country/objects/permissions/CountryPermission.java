@@ -24,7 +24,7 @@ public enum CountryPermission {
     OPEN_DOOR("Open doors and trapdoors in faction's claims."),
     INTERACT("Interact with other blocks in faction's claims.");
 
-    private String description;
+    private final String description;
 
     CountryPermission(String description) {
         this.description = description;

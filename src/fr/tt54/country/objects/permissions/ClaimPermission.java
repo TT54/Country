@@ -14,7 +14,7 @@ public enum ClaimPermission {
     INTERACT("Interact with other blocks in this claim.");
 
 
-    private String description;
+    private final String description;
 
     ClaimPermission(String description) {
         this.description = description;

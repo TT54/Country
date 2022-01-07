@@ -43,7 +43,7 @@ public class EconomyManager {
     public static boolean playerWithdraw(Player player, Country country, double amount) {
         if (Main.isEconomySetup()) {
             Economy economy = Main.getEconomy();
-            if (country.getMoney() >= amount) {
+            if (country.hasMoney(amount)) {
                 economy.depositPlayer(player, amount);
                 country.removeMoney(amount);
                 saveMoney(country);
